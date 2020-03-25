@@ -1,2 +1,2 @@
-# DI-design.github.io
+# clumsyguppies.github.io
 course website
