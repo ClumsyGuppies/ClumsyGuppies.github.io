@@ -1,2 +1,2 @@
-# clumsyguppies.github.io
+# clumsyguppy.github.io
 course website
