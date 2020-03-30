@@ -1,6 +1,16 @@
 /*
+Diana Kumykova
+Team: Clumsy Guppy Studios
+Changes:
+-changed text status message
+-change on enter + exit bead behavior
+-change bead behavior to cycle through colors + opacities as draw over beads
+-change grid size to 10 by 10
+-change grid background to white
+
+
 game.js for Perlenspiel 3.3.x
-Last revision: 2018-10-14 (BM)
+
 
 Perlenspiel is a scheme by Professor Moriarty (bmoriarty@wpi.edu).
 This version of Perlenspiel (3.3.x) is hosted at <https://ps3.perlenspiel.net>
@@ -47,27 +57,71 @@ Any value returned is ignored.
 [system : Object] = A JavaScript object containing engine and host platform information properties; see API documentation for details.
 [options : Object] = A JavaScript object with optional data properties; see API documentation for details.
 */
+let colors = [PS.COLOR_RED, PS.COLOR_ORANGE, 
+	PS.COLOR_YELLOW, PS.COLOR_GREEN, PS.COLOR_BLUE,PS.COLOR_VIOLET]
 
-PS.init = function( system, options ) {
-	"use strict"; // Do not remove this directive!
+let colIndex = 0
+let clicked = false
+let channel
+var music = ""
+let DIM = 10
 
-	// Establish grid dimensions
+var me = ( function () {
+	// By convention, constants are all upper-case
+
 	
-	PS.gridSize( 8, 8 );
-	
-	// Set background color to Perlenspiel logo gray
-	
-	PS.gridColor( 0x303030 );
+	//let DIM = 10,
+
+	// The 'exports' object is used to define
+	// variables and/or functions that need to be
+	// accessible outside this function.
+	// So far, it contains only one property,
+	// an 'init' function with no parameters.
+   
+	var exports = {
+   
+	//returns true if all cells have alpha value of 255, else false
+	allColor: function(){
+		for(var i = 0; i < DIM; i++){
+			for(var j = 0; j < DIM; j++){
+				if(PS.color(i, j) != colors[colIndex]){
+					return false;
+				}
+			}
+		}
+		return true;
+	},
+
+	init : function () {
+	PS.gridSize( DIM, DIM ); // init grid
+	PS.gridColor( PS.COLOR_WHITE );
 	
 	// Change status line color and text
 
-	PS.statusColor( PS.COLOR_WHITE );
-	PS.statusText( "Touch any bead" );
+	PS.statusColor( PS.COLOR_VIOLET );
+	PS.statusText( "It's Rainbow Time" );
 	
+	PS.color(PS.ALL, PS.ALL, colors[colIndex]);
+	PS.alpha(PS.ALL, PS.ALL, 0);
 	// Preload click sound
 
-	PS.audioLoad( "fx_click" );
-};
+	var loader = function ( data ) {
+		music = data.channel; // save ID
+	};
+
+	PS.audioLoad( "omake-pfadlib", {path: "./", fileTypes: ["mp3"], onLoad : loader });
+	}
+	};
+	
+	// Return the 'exports' object as the value
+	// of this function, thereby assigning it
+	// to the global G variable. This makes
+	// its properties visible to Perlenspiel.
+   
+	return exports;
+   } () );
+
+PS.init = me.init;
 
 /*
 PS.touch ( x, y, data, options )
@@ -81,31 +135,9 @@ This function doesn't have to do anything. Any value returned is ignored.
 
 PS.touch = function( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!	
-	var next;
 
-	// Toggle color of touched bead from white to black and back again
-	// NOTE: The default value of a bead's [data] is 0, which equals PS.COLOR_BLACK
+	clicked = true;
 
-	PS.color( x, y, data ); // set color to value of data
-	
-	// Decide what the next color should be
-	
-	if ( data === PS.COLOR_BLACK ) {
-		next = PS.COLOR_WHITE;
-	} else {
-		next = PS.COLOR_BLACK;
-	}
-	
-	// NOTE: The above statement could also be expressed using JavaScript's ternary operator:
-	// next = ( data === PS.COLOR_BLACK ) ? PS.COLOR_WHITE : PS.COLOR_BLACK;
-	
-	// Remember the newly-changed color by storing it in the bead's data
-	
-	PS.data( x, y, next );
-
-	// Play click sound
-
-	PS.audioPlay( "fx_click" );
 };
 
 /*
@@ -120,19 +152,14 @@ This function doesn't have to do anything. Any value returned is ignored.
 
 // UNCOMMENT the following code BLOCK to expose the PS.release() event handler:
 
-/*
+
 
 PS.release = function( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!
-
-	// Uncomment the following code line to inspect x/y parameters:
-
-	// PS.debug( "PS.release() @ " + x + ", " + y + "\n" );
-
-	// Add code here for when the mouse button/touch is released over a bead.
+	clicked = false;
 };
 
-*/
+
 
 /*
 PS.enter ( x, y, button, data, options )
@@ -146,19 +173,96 @@ This function doesn't have to do anything. Any value returned is ignored.
 
 // UNCOMMENT the following code BLOCK to expose the PS.enter() event handler:
 
-/*
+
 
 PS.enter = function( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!
 
-	// Uncomment the following code line to inspect x/y parameters:
+	var neighbors = [];
+	var tleft = {x: -1, y: -1}; 
+	var t = {x: 0, y: -1}; 
+	var tright = {x: 1, y: -1}; 
+	var left = {x: -1, y: 0};  
+	var right = {x: 1, y: 0}; 
+	var bright = {x: -1, y: 1}; 
+	var b = {x: 0, y: 1}; 
+	var bleft = {x: 1, y: 1}; 
+	neighbors.push(tleft, t, tright, left, right, bright, b, bleft);
 
-	// PS.debug( "PS.enter() @ " + x + ", " + y + "\n" );
+	if(!clicked){
+		return;
+	}
 
-	// Add code here for when the mouse cursor/touch enters a bead.
+	var a = PS.alpha(x, y) + 75 < 255? PS.alpha(x, y) + 75 : 255;
+
+	if(a == 255){
+		if(!colIndex || me.allColor()){
+			colIndex++;
+		} 
+
+		if(colIndex >= colors.length - 1){
+			//PS.color(x, y, colors[colIndex]);
+			PS.alpha(x, y, 255);
+		} else {
+			//PS.debug("color length: " + colIndex);
+			PS.color(x, y, colors[colIndex]);
+			PS.alpha(x, y, 75);
+		}
+
+	} else {
+		PS.alpha(x, y, a);
+	}
+	
+	//neighbors
+	neighbors.forEach((el) => {
+		var nX = x + el.x;
+		var nY = y + el.y;
+
+		if(nX >= 0 && nY >= 0 && nX < DIM && nY < DIM){
+
+			var al = PS.alpha(nX, nY); //current neighbor alpha
+			//PS.debug(al);
+			var newAl = 0;
+
+			if(al + 20 < 255){
+				newAl = al + 20;
+			} else {
+				if(!colIndex){ //change to next color to start new cycle
+					//PS.debug("first full cell, gets new color!");
+					colIndex++;	
+					PS.color(nX, nY, colors[colIndex]);
+					newAl = 20;
+				} else {
+					if(me.allColor()){ //if all cells are completely 1 color
+						PS.debug("color length: " + colIndex);
+						if(colIndex >= colors.length - 1){
+							newAl = 255;
+						} else {
+							//PS.debug("all cells are full");
+							colIndex++; //go to next color 
+							PS.color(nX, nY, colors[colIndex]);
+							newAl = 20;
+
+						}
+					}
+
+					
+				}
+				
+				PS.color(nX, nY, colors[colIndex]);
+				
+			}
+
+			PS.alpha(nX, nY, newAl);
+			//channel = colIndex < 1 ? PS.audioPlayChannel( music ): PS.audioPause( channel );
+			
+		}
+		
+	});
+
 };
 
-*/
+
 
 /*
 PS.exit ( x, y, data, options )
@@ -172,19 +276,17 @@ This function doesn't have to do anything. Any value returned is ignored.
 
 // UNCOMMENT the following code BLOCK to expose the PS.exit() event handler:
 
-/*
+
 
 PS.exit = function( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!
+	// if(colIndex){
+	// 	channel = PS.audioPause( channel ); // restart it
 
-	// Uncomment the following code line to inspect x/y parameters:
-
-	// PS.debug( "PS.exit() @ " + x + ", " + y + "\n" );
-
-	// Add code here for when the mouse cursor/touch exits a bead.
+	// }
 };
 
-*/
+
 
 /*
 PS.exitGrid ( options )
