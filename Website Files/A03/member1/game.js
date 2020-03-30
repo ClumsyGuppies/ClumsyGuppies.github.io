@@ -1,16 +1,6 @@
 /*
-Diana Kumykova
-Team: Clumsy Guppy Studios
-Changes:
--changed text status message
--change on enter + exit bead behavior
--change bead behavior to cycle through colors + opacities as draw over beads
--change grid size to 10 by 10
--change grid background to white
-
-
 game.js for Perlenspiel 3.3.x
-
+Last revision: 2018-10-14 (BM)
 
 Perlenspiel is a scheme by Professor Moriarty (bmoriarty@wpi.edu).
 This version of Perlenspiel (3.3.x) is hosted at <https://ps3.perlenspiel.net>
@@ -81,7 +71,7 @@ var me = ( function () {
 	var exports = {
    
 	//returns true if all cells have alpha value of 255, else false
-	allColor: function(){
+	allColor: function(currentColor){
 		for(var i = 0; i < DIM; i++){
 			for(var j = 0; j < DIM; j++){
 				if(PS.color(i, j) != colors[colIndex]){
@@ -93,25 +83,26 @@ var me = ( function () {
 	},
 
 	init : function () {
-	PS.gridSize( DIM, DIM ); // init grid
-	PS.gridColor( PS.COLOR_WHITE );
-	
-	// Change status line color and text
+		PS.gridSize( DIM, DIM ); // init grid
+		
+		PS.gridColor( PS.COLOR_WHITE );
+		
+		// Change status line color and text
 
-	PS.statusColor( PS.COLOR_VIOLET );
-	PS.statusText( "Click and drag to draw!" );
-	
-	PS.color(PS.ALL, PS.ALL, colors[colIndex]);
-	PS.alpha(PS.ALL, PS.ALL, 0);
-	// Preload click sound
+		PS.statusColor( PS.COLOR_VIOLET );
+		PS.statusText( "Click and Drag to Draw" );
+		
+		PS.color(PS.ALL, PS.ALL, colors[0]);
+		PS.alpha(PS.ALL, PS.ALL, 0);
+		PS.data(PS.ALL, PS.ALL, [colors[0], 0]); //current color and current color number
 
-	var loader = function ( data ) {
-		music = data.channel; // save ID
-	};
+		var loader = function ( data ) {
+			music = data.channel; // save ID
+		};
 
-	//PS.audioLoad( "omake-pfadlib", {path: "./", fileTypes: ["mp3"], onLoad : loader });
-	}
-	};
+		//PS.audioLoad( "omake-pfadlib", {path: "./", fileTypes: ["mp3"], onLoad : loader });
+	} 	
+};
 	
 	// Return the 'exports' object as the value
 	// of this function, thereby assigning it
@@ -193,69 +184,46 @@ PS.enter = function( x, y, data, options ) {
 		return;
 	}
 
-	var a = PS.alpha(x, y) + 75 < 255? PS.alpha(x, y) + 75 : 255;
-
-	if(a == 255){
-		if(!colIndex || me.allColor()){
-			colIndex++;
-		} 
-
-		if(colIndex >= colors.length - 1){
-			//PS.color(x, y, colors[colIndex]);
-			PS.alpha(x, y, 255);
-		} else {
-			//PS.debug("color length: " + colIndex);
-			PS.color(x, y, colors[colIndex]);
-			PS.alpha(x, y, 75);
-		}
-
-	} else {
-		PS.alpha(x, y, a);
+	if(x >= 0 && y >= 0 && x <= DIM && y <= DIM){
+		var mainIndex = PS.data(x, y)[1];
+		var a = PS.alpha(x, y) + 75 < 255? PS.alpha(x, y) + 75 : 255;
+		var mainA = (mainIndex == colors.length - 1 ? 255 : a);
+		PS.alpha(x, y, mainA);
+		
 	}
 	
+
 	//neighbors
 	neighbors.forEach((el) => {
 		var nX = x + el.x;
 		var nY = y + el.y;
 
+		
 		if(nX >= 0 && nY >= 0 && nX < DIM && nY < DIM){
-
+			var currentColor = PS.data(nX, nY)[0];
+			var colorIndex = PS.data(nX, nY)[1];
+			
+			//PS.debug("width: " + PS.gridSize().width);
+			//PS.debug("x: " + nX + " y: " + nY + " ");
 			var al = PS.alpha(nX, nY); //current neighbor alpha
-			//PS.debug(al);
 			var newAl = 0;
-
-			if(al + 20 < 255){
+			
+			if(al + 20 < 255){ //stay same color and increase opacity
 				newAl = al + 20;
-			} else {
-				if(!colIndex){ //change to next color to start new cycle
-					//PS.debug("first full cell, gets new color!");
-					colIndex++;	
-					PS.color(nX, nY, colors[colIndex]);
-					newAl = 20;
-				} else {
-					if(me.allColor()){ //if all cells are completely 1 color
-						//PS.debug("color length: " + colIndex);
-						if(colIndex >= colors.length - 1){
-							newAl = 255;
-						} else {
-							//PS.debug("all cells are full");
-							colIndex++; //go to next color 
-							PS.color(nX, nY, colors[colIndex]);
-							newAl = 20;
-
-						}
-					}
-
-					
+			} else { //time to change color of that cell
+				//colorIndex = colorIndex < colors.length ? colorIndex + 1 : 0; 
+				colorIndex++;
+				if(nX >= 0 && nY >= 0 && nX <= DIM && nY <= DIM){
+					PS.data(nX, nY, [colors[colorIndex], colorIndex]);
 				}
+				PS.color(nX, nY, colors[colorIndex]);
 				
-				PS.color(nX, nY, colors[colIndex]);
-				
+				newAl = (colorIndex == colors.length - 1 ? 255 : 20);
+				//newAl = 20;
 			}
 
-			PS.alpha(nX, nY, newAl);
-			//channel = colIndex < 1 ? PS.audioPlayChannel( music ): PS.audioPause( channel );
-			
+			PS.alpha(nX, nY, newAl);	
+				
 		}
 		
 	});
