@@ -69,6 +69,11 @@ var me = ( function () {
 		PS.color(PS.ALL, PS.ALL, colors[0]);
 		PS.alpha(PS.ALL, PS.ALL, 0);
 		PS.data(PS.ALL, PS.ALL, [colors[0], 0]); //current color and current color number
+		PS.border(PS.ALL, PS.ALL, 0);
+		PS.border(PS.ALL, 0, {top: 1});
+		PS.border(0, PS.ALL, {left: 1});
+		PS.border(DIM - 1, PS.ALL, {right: 1});
+		PS.border(PS.ALL, DIM - 1, {bottom: 1});
 
 		
 	} 	
