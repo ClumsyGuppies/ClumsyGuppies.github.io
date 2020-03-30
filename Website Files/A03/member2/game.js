@@ -1,4 +1,18 @@
 /*
+
+Name: Isabelle Cordova
+Team: Clumsy Guppy
+
+Mod 1: Changed grid size from default 8x8 to 15x8
+Mod 2: Added themed Call to Action to status line
+Mod 3: Set grid background to deep purple space-like color (0x212240)
+Mod 4: Changed all border width to 0
+Mod 5: Set individual cell colors
+Mod 6: Add star glyphs to cells
+Mod 7: Added xylophone sound when user clicks star glyph
+Mod 8: Removed black and white touch features
+
+
 game.js for Perlenspiel 3.3.x
 Last revision: 2018-10-14 (BM)
 
@@ -53,16 +67,188 @@ PS.init = function( system, options ) {
 
 	// Establish grid dimensions
 	
-	PS.gridSize( 8, 8 );
+	PS.gridSize( 15, 8 );
 	
-	// Set background color to Perlenspiel logo gray
+	// Set background color to dark purple
 	
-	PS.gridColor( 0x303030 );
+	PS.gridColor( 0x212240 );
 	
 	// Change status line color and text
 
 	PS.statusColor( PS.COLOR_WHITE );
-	PS.statusText( "Touch any bead" );
+	PS.statusText( "Touch the stars" ); //changed text
+
+	// Individual bead colors
+	PS.color( 0, 0, 0xD38DE8 );
+	PS.color( 1, 0, 0xD38DE8 );
+	PS.color( 2, 0, 0xD38DE8 );
+	PS.color( 3, 0, 0xAF70C5 );
+	PS.color( 4, 0, 0xAF70C5 );
+	PS.color( 5, 0, 0xAF70C5 );
+	PS.color( 6, 0, 0x8E5AC2 );
+	PS.color( 7, 0, 0x8E5AC2 );
+	PS.color( 8, 0, 0x8E5AC2 );
+	PS.color( 9, 0, 0xAF70C5 );
+	PS.color( 10, 0, 0xAF70C5 );
+	PS.color( 11, 0, 0xAF70C5 );
+	PS.color( 12, 0, 0xD38DE8 );
+	PS.color( 13, 0, 0xD38DE8 );
+	PS.color( 14, 0, 0xD38DE8 );
+
+	PS.glyph( 7, 0, 0x263E);
+	PS.glyphColor( 7, 0, PS.COLOR_WHITE );
+
+	PS.glyph( 9, 0, 0x002A);
+	PS.glyphColor( 9, 0, PS.COLOR_WHITE );
+
+	PS.color( 0, 1, 0xAF70C5 );
+	PS.color( 1, 1, 0xAF70C5 );
+	PS.color( 2, 1, 0xAF70C5 );
+	PS.color( 3, 1, 0x8E5AC2 );
+	PS.color( 4, 1, 0x8E5AC2 );
+	PS.color( 5, 1, 0x8E5AC2 );
+	PS.color( 6, 1, 0xAF70C5 );
+	PS.color( 7, 1, 0xAF70C5 );
+	PS.color( 8, 1, 0xAF70C5 );
+	PS.color( 9, 1, 0x8E5AC2 );
+	PS.color( 10, 1, 0x8E5AC2 );
+	PS.color( 11, 1, 0x8E5AC2 );
+	PS.color( 12, 1, 0xAF70C5 );
+	PS.color( 13, 1, 0xAF70C5 );
+	PS.color( 14, 1, 0xAF70C5 );
+
+	PS.glyph( 3, 1, 0x26AC);
+	PS.glyphColor( 3, 1, PS.COLOR_WHITE );
+
+	PS.color( 0, 2, 0x915CB1 );
+	PS.color( 1, 2, 0x915CB1 );
+	PS.color( 2, 2, 0x915CB1 );
+	PS.color( 3, 2, 0x6E48AC );
+	PS.color( 4, 2, 0x6E48AC );
+	PS.color( 5, 2, 0x6E48AC );
+	PS.color( 6, 2, 0x915CB1 );
+	PS.color( 7, 2, 0x915CB1 );
+	PS.color( 8, 2, 0x915CB1 );
+	PS.color( 9, 2, 0x6E48AC );
+	PS.color( 10, 2, 0x6E48AC );
+	PS.color( 11, 2, 0x6E48AC );
+	PS.color( 12, 2, 0x915CB1 );
+	PS.color( 13, 2, 0x915CB1 );
+	PS.color( 14, 2, 0x915CB1 );
+
+	PS.color( 0, 3, 0x6E48AC );
+	PS.color( 1, 3, 0x6E48AC );
+	PS.color( 2, 3, 0x6E48AC );
+	PS.color( 3, 3, 0x8D5ABC );
+	PS.color( 4, 3, 0x8D5ABC );
+	PS.color( 5, 3, 0x8D5ABC );
+	PS.color( 6, 3, 0x6E48AC );
+	PS.color( 7, 3, 0x6E48AC );
+	PS.color( 8, 3, 0x6E48AC );
+	PS.color( 9, 3, 0x8D5ABC );
+	PS.color( 10, 3, 0x8D5ABC );
+	PS.color( 11, 3, 0x8D5ABC );
+	PS.color( 12, 3, 0x6E48AC );
+	PS.color( 13, 3, 0x6E48AC );
+	PS.color( 14, 3, 0x6E48AC );
+
+	PS.glyph( 7, 3, 0x002A);
+	PS.glyphColor( 7, 3, PS.COLOR_WHITE );
+
+	PS.glyph( 12, 3, 0x002A);
+	PS.glyphColor( 12, 3, PS.COLOR_WHITE );
+
+	PS.color( 0, 4, 0x8D5ABC );
+	PS.color( 1, 4, 0x8D5ABC );
+	PS.color( 2, 4, 0x8D5ABC );
+	PS.color( 3, 4, 0x6E48AC );
+	PS.color( 4, 4, 0x6E48AC );
+	PS.color( 5, 4, 0x6E48AC );
+	PS.color( 6, 4, 0x8D5ABC );
+	PS.color( 7, 4, 0x8D5ABC );
+	PS.color( 8, 4, 0x8D5ABC );
+	PS.color( 9, 4, 0x6E48AC );
+	PS.color( 10, 4, 0x6E48AC );
+	PS.color( 11, 4, 0x6E48AC );
+	PS.color( 12, 4, 0x8D5ABC );
+	PS.color( 13, 4, 0x8D5ABC );
+	PS.color( 14, 4, 0x8D5ABC );
+
+	PS.glyph( 0, 4, 0x002A);
+	PS.glyphColor( 0, 4, PS.COLOR_WHITE );
+
+	PS.color( 0, 5, 0x6E48AC );
+	PS.color( 1, 5, 0x6E48AC );
+	PS.color( 2, 5, 0x6E48AC );
+	PS.color( 3, 5, 0x4D3F9D );
+	PS.color( 4, 5, 0x4D3F9D );
+	PS.color( 5, 5, 0x4D3F9D );
+	PS.color( 6, 5, 0x6E48AC );
+	PS.color( 7, 5, 0x6E48AC );
+	PS.color( 8, 5, 0x6E48AC );
+	PS.color( 9, 5, 0x4D3F9D );
+	PS.color( 10, 5, 0x4D3F9D );
+	PS.color( 11, 5, 0x4D3F9D );
+	PS.color( 12, 5, 0x6E48AC );
+	PS.color( 13, 5, 0x6E48AC );
+	PS.color( 14, 5, 0x6E48AC );
+
+	PS.glyph( 0, 5, 0x26AC);
+	PS.glyphColor( 0, 5, PS.COLOR_WHITE );
+
+	PS.color( 0, 6, 0x4D3F9D );
+	PS.color( 1, 6, 0x4D3F9D );
+	PS.color( 2, 6, 0x4D3F9D );
+	PS.color( 3, 6, 0x412F7D );
+	PS.color( 4, 6, 0x412F7D );
+	PS.color( 5, 6, 0x412F7D );
+	PS.color( 6, 6, 0x4D3F9D );
+	PS.color( 7, 6, 0x4D3F9D );
+	PS.color( 8, 6, 0x4D3F9D );
+	PS.color( 9, 6, 0x412F7D );
+	PS.color( 10, 6, 0x412F7D );
+	PS.color( 11, 6, 0x412F7D );
+	PS.color( 12, 6, 0x4D3F9D );
+	PS.color( 13, 6, 0x4D3F9D );
+	PS.color( 14, 6, 0x4D3F9D );
+
+	PS.glyph( 3, 6, 0x002A);
+	PS.glyphColor( 3, 6, PS.COLOR_WHITE );
+
+	PS.glyph( 7, 6, 0x002A);
+	PS.glyphColor( 7, 6, PS.COLOR_WHITE );
+
+	PS.glyph( 10, 6, 0x002A);
+	PS.glyphColor( 10, 6, PS.COLOR_WHITE );
+
+
+	PS.color( 0, 7, 0x412F7D );
+	PS.color( 1, 7, 0x412F7D );
+	PS.color( 2, 7, 0x412F7D );
+	PS.color( 3, 7, 0x443983 );
+	PS.color( 4, 7, 0x443983 );
+	PS.color( 5, 7, 0x443983 );
+	PS.color( 6, 7, 0x412F7D );
+	PS.color( 7, 7, 0x412F7D );
+	PS.color( 8, 7, 0x412F7D );
+	PS.color( 9, 7, 0x443983 );
+	PS.color( 10, 7, 0x443983 );
+	PS.color( 11, 7, 0x443983 );
+	PS.color( 12, 7, 0x412F7D );
+	PS.color( 13, 7, 0x412F7D );
+	PS.color( 14, 7, 0x412F7D );
+
+	PS.glyph( 0, 7, 0x002A);
+	PS.glyphColor( 0, 7, PS.COLOR_WHITE );
+
+	PS.glyph( 6, 7, 0x002A);
+	PS.glyphColor( 6, 7, PS.COLOR_WHITE );
+
+	PS.glyph( 13, 7, 0x002A);
+	PS.glyphColor( 13, 7, PS.COLOR_WHITE );
+
+	// Change border width
+	PS.border( PS.ALL, PS.ALL, 0 );
 	
 	// Preload click sound
 
@@ -86,16 +272,16 @@ PS.touch = function( x, y, data, options ) {
 	// Toggle color of touched bead from white to black and back again
 	// NOTE: The default value of a bead's [data] is 0, which equals PS.COLOR_BLACK
 
-	PS.color( x, y, data ); // set color to value of data
+	// PS.color( x, y, data ); // set color to value of data
 	
 	// Decide what the next color should be
-	
+    /*
 	if ( data === PS.COLOR_BLACK ) {
 		next = PS.COLOR_WHITE;
 	} else {
 		next = PS.COLOR_BLACK;
-	}
-	
+	} */
+
 	// NOTE: The above statement could also be expressed using JavaScript's ternary operator:
 	// next = ( data === PS.COLOR_BLACK ) ? PS.COLOR_WHITE : PS.COLOR_BLACK;
 	
@@ -105,7 +291,14 @@ PS.touch = function( x, y, data, options ) {
 
 	// Play click sound
 
-	PS.audioPlay( "fx_click" );
+	PS.touch = function ( x, y, data, options ) {
+		//PS.audioPlay( "fx_click" );
+	if (PS.glyph( x ,y) === 0x002A) {
+		PS.audioPlay( "xylo_c5" );
+	}
+
+	};
+
 };
 
 /*
