@@ -99,7 +99,7 @@ var me = ( function () {
 	// Change status line color and text
 
 	PS.statusColor( PS.COLOR_VIOLET );
-	PS.statusText( "It's Rainbow Time" );
+	PS.statusText( "Click and drag to draw!" );
 	
 	PS.color(PS.ALL, PS.ALL, colors[colIndex]);
 	PS.alpha(PS.ALL, PS.ALL, 0);
@@ -109,7 +109,7 @@ var me = ( function () {
 		music = data.channel; // save ID
 	};
 
-	PS.audioLoad( "omake-pfadlib", {path: "./", fileTypes: ["mp3"], onLoad : loader });
+	//PS.audioLoad( "omake-pfadlib", {path: "./", fileTypes: ["mp3"], onLoad : loader });
 	}
 	};
 	
@@ -234,7 +234,7 @@ PS.enter = function( x, y, data, options ) {
 					newAl = 20;
 				} else {
 					if(me.allColor()){ //if all cells are completely 1 color
-						PS.debug("color length: " + colIndex);
+						//PS.debug("color length: " + colIndex);
 						if(colIndex >= colors.length - 1){
 							newAl = 255;
 						} else {
