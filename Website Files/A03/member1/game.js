@@ -48,47 +48,21 @@ Any value returned is ignored.
 [options : Object] = A JavaScript object with optional data properties; see API documentation for details.
 */
 let colors = [PS.COLOR_RED, PS.COLOR_ORANGE, 
-	PS.COLOR_YELLOW, PS.COLOR_GREEN, PS.COLOR_BLUE,PS.COLOR_VIOLET]
+	PS.COLOR_YELLOW, PS.COLOR_GREEN, PS.COLOR_BLUE,PS.COLOR_VIOLET] //colors to cycle through
 
-let colIndex = 0
-let clicked = false
-let channel
-var music = ""
-let DIM = 10
+let colIndex = 0 //index within colors array
+let clicked = false //is mouse held?
+let DIM = 10 //grid size
 
 var me = ( function () {
-	// By convention, constants are all upper-case
 
-	
-	//let DIM = 10,
-
-	// The 'exports' object is used to define
-	// variables and/or functions that need to be
-	// accessible outside this function.
-	// So far, it contains only one property,
-	// an 'init' function with no parameters.
-   
 	var exports = {
    
-	//returns true if all cells have alpha value of 255, else false
-	allColor: function(currentColor){
-		for(var i = 0; i < DIM; i++){
-			for(var j = 0; j < DIM; j++){
-				if(PS.color(i, j) != colors[colIndex]){
-					return false;
-				}
-			}
-		}
-		return true;
-	},
-
 	init : function () {
 		PS.gridSize( DIM, DIM ); // init grid
 		
 		PS.gridColor( PS.COLOR_WHITE );
 		
-		// Change status line color and text
-
 		PS.statusColor( PS.COLOR_VIOLET );
 		PS.statusText( "Click and Drag to Draw" );
 		
@@ -96,11 +70,7 @@ var me = ( function () {
 		PS.alpha(PS.ALL, PS.ALL, 0);
 		PS.data(PS.ALL, PS.ALL, [colors[0], 0]); //current color and current color number
 
-		var loader = function ( data ) {
-			music = data.channel; // save ID
-		};
-
-		//PS.audioLoad( "omake-pfadlib", {path: "./", fileTypes: ["mp3"], onLoad : loader });
+		
 	} 	
 };
 	
@@ -169,6 +139,7 @@ This function doesn't have to do anything. Any value returned is ignored.
 PS.enter = function( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!
 
+	//closest neighbors to current cell mouse is in
 	var neighbors = [];
 	var tleft = {x: -1, y: -1}; 
 	var t = {x: 0, y: -1}; 
@@ -180,13 +151,16 @@ PS.enter = function( x, y, data, options ) {
 	var bleft = {x: 1, y: 1}; 
 	neighbors.push(tleft, t, tright, left, right, bright, b, bleft);
 
+	//only change colors when mouse is held down
 	if(!clicked){
 		return;
 	}
 
+	//error checking for grid bounds
 	if(x >= 0 && y >= 0 && x <= DIM && y <= DIM){
 		var mainIndex = PS.data(x, y)[1];
-		var a = PS.alpha(x, y) + 75 < 255? PS.alpha(x, y) + 75 : 255;
+		//gradually increase opacity of main cell 
+		var a = PS.alpha(x, y) + 75 < 255? PS.alpha(x, y) + 75 : 255; 
 		var mainA = (mainIndex == colors.length - 1 ? 255 : a);
 		PS.alpha(x, y, mainA);
 		
@@ -200,7 +174,7 @@ PS.enter = function( x, y, data, options ) {
 
 		
 		if(nX >= 0 && nY >= 0 && nX < DIM && nY < DIM){
-			var currentColor = PS.data(nX, nY)[0];
+			//var currentColor = PS.data(nX, nY)[0];
 			var colorIndex = PS.data(nX, nY)[1];
 			
 			//PS.debug("width: " + PS.gridSize().width);
@@ -208,16 +182,16 @@ PS.enter = function( x, y, data, options ) {
 			var al = PS.alpha(nX, nY); //current neighbor alpha
 			var newAl = 0;
 			
-			if(al + 20 < 255){ //stay same color and increase opacity
+			if(al + 20 < 255){ //stay same color and increase opacity at lesser rate than main cell
 				newAl = al + 20;
 			} else { //time to change color of that cell
-				//colorIndex = colorIndex < colors.length ? colorIndex + 1 : 0; 
 				colorIndex++;
+				//error checking grid size
 				if(nX >= 0 && nY >= 0 && nX <= DIM && nY <= DIM){
-					PS.data(nX, nY, [colors[colorIndex], colorIndex]);
+					PS.data(nX, nY, [colors[colorIndex], colorIndex]); //udpate cell data with new color
 				}
+
 				PS.color(nX, nY, colors[colorIndex]);
-				
 				newAl = (colorIndex == colors.length - 1 ? 255 : 20);
 				//newAl = 20;
 			}
