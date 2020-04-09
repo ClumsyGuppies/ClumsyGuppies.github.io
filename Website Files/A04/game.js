@@ -115,8 +115,13 @@ var me = ( function () {
 	
 	
 	init : function () {
-	PS.gridSize( DIM, DIM ); // init grid
-	PS.gridColor( PS.COLOR_WHITE );
+		PS.gridSize ( 32, 32 );
+		PS.gridColor ( PS.COLOR_WHITE );
+		PS.border ( PS.ALL, PS.ALL, 0 );
+		var loaded = function ( image ) {
+			PS.imageBlit( image, 0, 0 );
+		}
+		PS.imageLoad ( "images/pixelband.bmp", loaded );
 	
 	// Change status line color and text
 
