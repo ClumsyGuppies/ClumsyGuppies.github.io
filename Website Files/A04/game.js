@@ -30,168 +30,159 @@ Any value returned is ignored.
 
 // UNCOMMENT the following code BLOCK to expose the PS.init() event handler:
 
-let colors = [PS.COLOR_RED, PS.COLOR_ORANGE, 
-	PS.COLOR_YELLOW, PS.COLOR_GREEN, PS.COLOR_BLUE,PS.COLOR_VIOLET]
 
-let colIndex = 0
-let clicked = false
-let channel
-let DIM = 14
-let repeat = false
-let map
+let DIM = 32;
+let repeat = false;
 
-let drumChannel = ""
-let harpChannel = ""
-let pianoChannel = ""
-let dropChannel = ""
+let drumChannels = {next: "", previous: "", playing: ""};
+let pianoChannels = {next: "", previous: "", playing: ""};
+let stringsChannels = {next: "", previous: "", playing: ""};
+let bassChannels = {next: "", previous: "", playing: ""};
+let guitarChannels = {next: "", previous: "", playing: ""};
+
+let playButtons = [{play: false}, {play: false}, {play: false}, {play: false}, {play: false}, ]
+
+let drums = ["drum_1_1", "drum_2_1","drum_3_1", "drum_4_1", "drum_5_1", "drum_6_1", "drum_7_1"]
+let synth = ["string_synth_1_1", "string_synth_2_1", "synth_1_1", "synth_2_1", "synth_3_1", "synth_4_1"]
+let piano = ["piano_1_1", "piano_2_1", "piano_3_1", "piano_4_1", "piano_5_1"]
+let guitar = ["guitar_1_1", "guitar_2_1", "guitar_3_1", "guitar_4_1", "guitar_5_1", "guitar_6_1"]
+let bass = ["bass_1_1", "bass_2_1"]
+
+let allChannels = [];
+
+
+let instruments = ["drum", "piano", "strings", "bass", "guitar"]
+//defined as objects so i can pass as references to func
+let drumsI = {i:0}, stringsI = {i:0}, pianoI = {i:0}, guitarI = {i:0}, bassI = {i:0}
+
 
 var me = ( function () {
 
-	var section = function(lx, ly, colorA, colorIa, instrument){
-		PS.debug("sad time\n");
-		for(lx <= DIM/2? i = 0 : i = DIM/2; lx <= DIM/2? i < lx: i >= DIM/2 && i < DIM; i++){
-			for(ly <= DIM/2? j = 0 : j = DIM/2; ly <= DIM/2? j < ly: j >= DIM/2 && j < DIM; j++){
-				PS.data(i, j, [false, colorA, colorIa, instrument]);
-				PS.color(i, j, colorIa);
-				//PS.debug(i + " " + j + "\n");
+	var mapObject = function(x1, x2, y1, y2, data){
+		var i, j;
+		for(i = x1; i <= x2; i++){
+			for(j = y1; j <= y2; j++){
+				PS.data(i, j, data);
 			}
 		}
 	};
 
-	var populate = function(){
-		//cell data:
-	/**
-	 * isActive
-	 * cellColorActive
-	 * cellColorInactive
-	 * cellInstrument
-	*/
-	
-		//PS.debug("populate called");
-		section(DIM/2, DIM/2, PS.COLOR_BLUE, 0xa2defc, drumChannel); //top left
-		section(DIM, DIM/2, PS.COLOR_GREEN, 0xdfffde, pianoChannel); //top right
-		section(DIM/2, DIM, PS.COLOR_RED, 0xfad7e9, harpChannel); //bottom left
-		section(DIM, DIM, PS.COLOR_VIOLET, 0xdcc2f2, dropChannel); //bottom right
+	var mapInstruments = function(){
+		//violin
+		mapObject(3, 7, 0, 13, ["strings"]);
+		mapObject(2, 3, 15, 17, ["strings", "subtract"]);
+		mapObject(7, 8, 15, 17, ["strings", "add"]);
+		// //guitar
+		mapObject(24, 30, 15, 27, ["guitar"]);
+		mapObject(24, 25, 29, 31, ["guitar", "subtract"]);
+		mapObject(29, 30, 29, 31, ["guitar", "add"]);
+		// //piano
+		mapObject(18, 30, 1, 6, ["piano"]);
+		mapObject(21, 22, 8, 10, ["piano", "subtract"]);
+		mapObject(26, 27, 8, 10, ["piano", "add"]);
+		// //drums
+		mapObject(2, 9, 20, 27, ["drum"]);
+		mapObject(3, 4, 29, 31, ["drum", "subtract"]);
+		mapObject(8, 9, 29, 31, ["drum", "add"]);
+		// //bass
+		mapObject(13, 18, 7, 20, ["bass"]);
+		mapObject(13, 14, 22, 24, ["bass", "subtract"]);
+		mapObject(18, 19, 22, 24, ["bass", "add"]);
 		
-	
+		//pause and start
+		mapObject(12, 16, 27, 31, ["pause"]);
+		mapObject(17, 21, 27, 31, ["play"]);
 
-	}; 
-
-	
-	var loadSounds = function(){
-		var loadP = function ( data ) {
-			pianoChannel = data.channel; // save ID
-		};
-		var loadH = function ( data ) {
-			harpChannel = data.channel; // save ID
-		};
-		var loadDru = function ( data ) {
-			drumChannel = data.channel; // save ID
-		};
-		var loadDro = function ( data ) {
-			dropChannel = data.channel; // save ID
-		};
-
-		PS.audioLoad( "perc_conga_low", {
-			lock: true,
-			onLoad : loadDru // specify loader function
-		} );
-		PS.audioLoad( "piano_e6", {
-			lock: true,
-			onLoad : loadP // specify loader function
-		} );
-		PS.audioLoad( "hchord_eb5", {
-			lock: true,
-			onLoad : loadH // specify loader function
-		} );
-		PS.audioLoad( "fx_bloop", {
-			lock: true,
-			onLoad : loadDro // specify loader function
-		} );
-	};
-
+	}
 
 	var exports = {
-	
-	
-	init : function () {
-		PS.gridSize ( 32, 32 );
-		PS.gridColor ( PS.COLOR_WHITE );
-		PS.border ( PS.ALL, PS.ALL, 0 );
-
-		var loaded = function ( image ) {
-			PS.imageBlit( image, 0, 0 );
-		}
-
-		PS.imageLoad ( "images/pixelband.bmp", loaded );
-	// Change status line color and text
-
-	PS.statusColor( PS.COLOR_VIOLET );
-	PS.statusText( "Pixel Band! Hold R to enable repeater" );
-	
-	loadSounds();
-	populate();
-
-	// var loader = function ( data ) {
-	// 	music = data.channel; // save ID
-	// };
-	// PS.audioLoad( "perc_conga_low", {
-	// 	lock: true,
-	// 	onLoad : loader // specify loader function
-	// } );
-
-	//PS.audioPlayChannel(data[3]);
-	
-	
-	//whether tile is active, whether or not tile should repeat, and how many times repeats per second (tempo) 
-	//cell data:
-	/**
-	 * isActive
-	 * cellColorActive
-	 * cellColorInactive
-	 * cellInstrument
-	*/
-	//PS.data(PS.ALL, PS.ALL, [false, false, 1, music, PS.COLOR_RED]);
-
-	//utilize map, similar to gold collector example, to draw out each
-	//instrument in place and assign color data to each cell
-	// map = [
-	// 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	// 	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-	// 	0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0,
-	// 	0, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 0,
-	// 	0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0,
-	// 	0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0,
-	// 	0, 1, 0, 2, 0, 1, 1, 1, 1, 1, 0, 2, 0, 1, 0,
-	// 	0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0,
-	// 	0, 1, 0, 2, 0, 1, 1, 1, 1, 1, 0, 2, 0, 1, 0,
-	// 	0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0,
-	// 	0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0,
-	// 	0, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 0,
-	// 	0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0,
-	// 	0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-	// 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-	// 	];
 		
-	// 	//active? repeat? repeat per second? sound?
-	// 	var psData = [false, false, 1, music]
-	// 	for(i= 0;i<DIM - 1; i++){
-	// 		for(j=0;j<DIM-1;j++){
-	// 			switch(map[i, j]){
-	// 				case 0:
-	// 					var pData = psData;
-	// 					PS.color(i, j, PS.COLOR_YELLOW);
-	// 					pData.push(PS.COLOR_YELLOW);
-	// 					PS.data(i, j, pData);
-	// 					break;
-	// 				case 1:
-	// 					break;
-	// 					//....TODO
-	// 			}
-	// 		}
-	// 	}
-	//PS.audioLoad( "omake-pfadlib", {path: "./", fileTypes: ["mp3"], onLoad : loader });
-	}
+		init : function () {
+			PS.gridSize( DIM, DIM ); // init grid
+			PS.gridColor( PS.COLOR_WHITE );
+			//PS.border ( PS.ALL, PS.ALL, 0 );
+
+			var loaded = function ( image ) {
+				PS.imageBlit( image, 0, 0 );
+			}
+
+			PS.imageLoad ( "./images/pixelband.bmp", loaded );
+			// Change status line color and text
+
+			PS.statusColor( PS.COLOR_VIOLET );
+			PS.statusText( "Pixel Band" );
+
+			//loadSounds();
+			mapInstruments();
+			//whether tile is active, whether or not tile should repeat, and how many times repeats per second (tempo)
+			//cell data:
+			//instruments.forEach(el=>exports.switchChannel(el));
+			exports.switchChannels();
+			
+		},
+
+		switchChannels : function(){
+			exports.switchAll(drums, drumsI, drumChannels, "./Drums/");
+			exports.switchAll(piano, pianoI, pianoChannels, "./Piano/");
+			exports.switchAll(bass, bassI, bassChannels, "./Bass/");
+			exports.switchAll(guitar, guitarI, guitarChannels, "./Guitar/");
+			exports.switchAll(synth, stringsI, stringsChannels, "./Strings/");
+
+		},
+		switchAll : function(array, index, channels, path){
+			//PS.debug("current previous: " + array[index.i]);
+			var loader = function ( data ) {
+				channels.next = data.channel; // save ID
+			};
+			   
+			PS.audioLoad( array[index.i], {path: path, fileTypes: ["mp3"], onLoad : loader });
+			//PS.debug("current channel: " + array[index.i]);
+		},
+		switchDrum : function(){
+			exports.switchAll(drums, drumsI, drumChannels, "./Drums/");
+		},
+		switchPiano : function(){
+			exports.switchAll(piano, pianoI, pianoChannels, "./Piano/");
+		},
+		switchBass : function(){
+			exports.switchAll(bass, bassI, bassChannels, "./Bass/");
+		},
+		switchString : function(){
+			exports.switchAll(synth, stringsI, stringsChannels, "./Strings/");
+		},
+		switchGuitar : function(){
+			exports.switchAll(guitar, guitarI, guitarChannels, "./Guitar/");
+		},
+
+		sampleSwap : function(samples, index, func, action){
+			PS.debug(samples + index + action);
+			//set index which should be changed bc can't pass by ref
+			
+			if(action == "subtract"){
+				index.i = index.i - 1 > -1? index.i - 1: samples.length - 1;
+				func();
+			} else if(action == "add"){
+				index.i = index.i + 1 < samples.length -1? index.i+ 1: 0;
+				func();
+			}
+		},
+
+		swapChannels : function(channels, playB){
+			channels.previous = channels.playing;
+			if(channels.previous != ""){
+				PS.audioStop(channels.previous);
+				allChannels.splice(allChannels.indexOf(channels.previous), 1);
+				PS.debug("all channels spliced: " + allChannels +"\n");
+			} 
+			if(playB){
+				channels.playing = channels.next;
+				PS.audioPlayChannel(channels.playing, {loop: true});
+				if(!allChannels.includes(channels.playing)){
+					allChannels.push(channels.playing);
+					PS.debug("all channels: " + allChannels + "\n");
+				}
+			}
+		}
 	};
 	
    
@@ -210,63 +201,71 @@ This function doesn't have to do anything. Any value returned is ignored.
 [options : Object] = A JavaScript object with optional data properties; see API documentation for details.
 */
 
-// UNCOMMENT the following code BLOCK to expose the PS.touch() event handler:
-
-
 PS.touch = function( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!
 
-	/**
-	 * isActive 0
-	 * cellColorActive 1
-	 * cellColorInactive 2
-	 * cellInstrumentChannel 3
-	*/
-	PS.debug( "PS.touch() @ " + x + ", " + y + "\n" );
-	PS.debug( PS.data(x, y)[0] + " " + data[1]+ " " + data[2]+ " " + data[3] +  "\n" );
+	PS.debug("data " + data);
 
-	if(repeat){ //click sound + keep repeating
-		if(data[0]) {//if active, currently repeating
-			//turn off sound and change active status to false
-			PS.audioStop(data[3]);
-			data[0] = false; //no longer active
-			PS.color(x, y, data[2]);
+	switch(data[0]){
+		case "drum":
+			if(data[1] != null){
+				me.sampleSwap(drums, drumsI, me.switchDrum, data[1]);
+				return;
+			}
+			playButtons[0].play? playButtons[0].play = false: playButtons[0].play = true;
+			me.swapChannels(drumChannels, playButtons[0].play);
+			break;
+		case "piano":
+			if(data[1] != null){
+				me.sampleSwap(piano, pianoI, me.switchPiano, data[1]);
+				return;
+			}
+			//drum loop
+			playButtons[1].play? playButtons[1].play = false: playButtons[1].play = true;
+			me.swapChannels(pianoChannels, playButtons[1].play);
+			break;
+		case "bass":
+			if(data[1] != null){
+				me.sampleSwap(bass, bassI, me.switchBass, data[1]);
+				return;
+			}
+			playButtons[2].play? playButtons[2].play = false: playButtons[2].play = true;
+			me.swapChannels(bassChannels, playButtons[2].play);
+			break;
+		case "strings":
+			if(data[1] != null){
+				me.sampleSwap(synth, stringsI, me.switchString, data[1]);
+				return;
+			}
+			playButtons[3].play? playButtons[3].play = false: playButtons[3].play = true;
+			me.swapChannels(stringsChannels, playButtons[3].play);
+			break;
+		case "guitar":
+			if(data[1] != null){
+				me.sampleSwap(guitar, guitarI, me.switchGuitar, data[1]);
+				return;
+			}
+			playButtons[4].play? playButtons[4].play = false: playButtons[4].play = true;
+			me.swapChannels(guitarChannels, playButtons[4].play);
+			break;
+		case "play":
+			PS.debug("play all");
+			allChannels.forEach(el=> PS.audioPlayChannel(el, {loop:true}));
+			break;
+		case "pause":
+			PS.debug("pause all");
+			allChannels.forEach(el=> PS.audioStop(el));
+			break;
 
-			//gray out instrument color; this will change from just 
-			//changing color of cell clicked to changing colors of all cells 
-			//that make up that instrument
-			//PS.color(x, y, PS.COLOR_WHITE);
+			//on switch load channel and set to current drums channel
 
-		} else { //not active, not currently repeating
-			//turn on repeater and change active status to true
-			PS.audioPlayChannel(data[3], {loop: true});
-			data[0] = true;
-			PS.color(x, y, data[1]);
-
-			//add in instrument color; will change to change all cells 
-			//in instrument to correct colors, not just selected cell
-			//PS.color(x, y, data[4]);
-		}
-
-	} else { //no repeat
-		PS.debug("data " + data[3]);
-		PS.audioPlayChannel(data[3]);
-		PS.audioPlayChannel(drumChannel);
-		
-		//flash color when pressed but change back to gray when done
-		PS.color(x, y, data[1]);
 	}
-	
-
 
 	
 
-	// Uncomment the following code line
-	// to inspect x/y parameters:
 
+	
 
-	// Add code here for mouse clicks/touches
-	// over a bead.
 };
 
 
@@ -288,7 +287,7 @@ This function doesn't have to do anything. Any value returned is ignored.
 PS.release = function( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!
 
-	repeat? PS.color(x, y, PS.CURRENT) : PS.color(x, y, data[2]);
+	//repeat? PS.color(x, y, PS.CURRENT) : PS.color(x, y, data[2]);
 	
 
 	// Uncomment the following code line to inspect x/y parameters:
@@ -343,7 +342,7 @@ This function doesn't have to do anything. Any value returned is ignored.
 PS.exit = function( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!
 
-	repeat? PS.color(x, y, PS.CURRENT) : PS.color(x, y, data[2]);
+	//repeat? PS.color(x, y, PS.CURRENT) : PS.color(x, y, data[2]);
 
 	// Uncomment the following code line to inspect x/y parameters:
 
