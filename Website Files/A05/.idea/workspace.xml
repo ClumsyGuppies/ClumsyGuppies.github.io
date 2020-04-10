@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9cbb5c0e-b971-4d50-a9b4-691027341c1b" name="Default Changelist" comment="" />
+    <list default="true" id="9f02f6d3-add6-49c2-bf86-128006fc71d2" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,7 +10,7 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
-  <component name="ProjectId" id="1aHo0JZqOzCCH1pYBu8vwScWTdM" />
+  <component name="ProjectId" id="1aMq9Qpya62583GL0SCTzFVIFfO" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -20,27 +20,19 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.detected.package.tslint" value="true" />
-    <property name="node.js.path.for.package.eslint" value="project" />
-    <property name="node.js.path.for.package.tslint" value="project" />
-    <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="9cbb5c0e-b971-4d50-a9b4-691027341c1b" name="Default Changelist" comment="" />
-      <created>1586401656056</created>
+      <changelist id="9f02f6d3-add6-49c2-bf86-128006fc71d2" name="Default Changelist" comment="" />
+      <created>1586555658110</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1586401656056</updated>
-      <workItem from="1586401658924" duration="622000" />
-      <workItem from="1586542000487" duration="1560000" />
-      <workItem from="1586555463897" duration="97000" />
-      <workItem from="1586555607892" duration="6000" />
+      <updated>1586555658110</updated>
+      <workItem from="1586555659274" duration="368000" />
     </task>
     <servers />
   </component>
