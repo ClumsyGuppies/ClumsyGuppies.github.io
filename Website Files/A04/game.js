@@ -44,6 +44,7 @@ let bass = ["bass_1_1", "bass_2_1", "bass_4_1"]
 
 //keep track of all channels active in order to enable play/pause all
 let allChannels = [];
+let allActive = []; //kept separate from allChannels for my own sanity and because i didn't want another array of objects
 
 //just so i know what's what
 let instruments = ["drum", "piano", "strings", "bass", "guitar"]
@@ -77,24 +78,24 @@ var me = ( function () {
 	var mapInstruments = function(){
 		//violin
 		mapObject(3, 7, 0, 13, ["strings"]);
-		mapObject(2, 3, 15, 17, ["strings", "subtract"]);
-		mapObject(7, 8, 15, 17, ["strings", "add"]);
+		mapObject(2, 4, 15, 17, ["strings", "subtract"]);
+		mapObject(6, 8, 15, 17, ["strings", "add"]);
 		// //guitar
 		mapObject(24, 30, 15, 27, ["guitar"]);
-		mapObject(24, 25, 29, 31, ["guitar", "subtract"]);
-		mapObject(29, 30, 29, 31, ["guitar", "add"]);
+		mapObject(24, 26, 29, 31, ["guitar", "subtract"]);
+		mapObject(28, 30, 29, 31, ["guitar", "add"]);
 		// //piano
 		mapObject(18, 30, 1, 6, ["piano"]);
-		mapObject(21, 22, 8, 10, ["piano", "subtract"]);
-		mapObject(26, 27, 8, 10, ["piano", "add"]);
+		mapObject(21, 23, 8, 10, ["piano", "subtract"]);
+		mapObject(25, 27, 8, 10, ["piano", "add"]);
 		// //drums
 		mapObject(2, 9, 20, 27, ["drum"]);
-		mapObject(3, 4, 29, 31, ["drum", "subtract"]);
-		mapObject(8, 9, 29, 31, ["drum", "add"]);
+		mapObject(3, 5, 29, 31, ["drum", "subtract"]);
+		mapObject(7, 9, 29, 31, ["drum", "add"]);
 		// //bass
 		mapObject(13, 18, 7, 20, ["bass"]);
-		mapObject(13, 14, 22, 24, ["bass", "subtract"]);
-		mapObject(18, 19, 22, 24, ["bass", "add"]);
+		mapObject(13, 15, 22, 24, ["bass", "subtract"]);
+		mapObject(17, 19, 22, 24, ["bass", "add"]);
 		
 		//pause and start
 		mapObject(12, 16, 27, 31, ["pause"]);
@@ -125,16 +126,20 @@ var me = ( function () {
 
 			//grab coordinates for each instruments display node
 			var block = {
-			  'drum': {x: 6, y: 30},
-			  'piano': {x: 24, y: 9},
-			  'bass': {x: 16, y: 23},
-			  'strings':{x: 5, y: 16},
-			  'guitar': {x: 27, y: 30},
+			  'drum': {x: 6, y1: 29, y2:31},
+			  'piano': {x: 24, y1: 8, y2:10},
+			  'bass': {x: 16, y1: 22, y2:24},
+			  'strings':{x: 5, y1: 15, y2:17},
+			  'guitar': {x: 27, y1: 29, y2:31},
 			};
 
 			var coord = {};
 			coord = (block[instrument]);
-			show? PS.color(coord.x, coord.y, PS.COLOR_GREEN): PS.color(coord.x, coord.y, PS.COLOR_WHITE);
+			for(var i = coord.y1; i <= coord.y2; i++){
+				show ? PS.color(coord.x, i, PS.COLOR_GREEN):PS.color(coord.x, i, PS.COLOR_WHITE);
+			}
+			
+			//show? PS.color(coord.x, coord.y, PS.COLOR_GREEN): PS.color(coord.x, coord.y, PS.COLOR_WHITE);
 
 		},
 
@@ -209,10 +214,12 @@ var me = ( function () {
 			if(channels.previous != ""){ //catch error if this is first sample played
 				PS.audioStop(channels.previous);
 				//remove stopped channel from all channels to make sure doesn't play again
-				var index = allChannels.indexOf(channels.previous);
-				PS.debug("spliced index: " + index + "\n")
-				if(index > -1){
-					allChannels.splice(index, 1);
+				var indexC = allChannels.indexOf(channels.previous);
+				var indexA = allActive.indexOf(instrument);
+				PS.debug("spliced index: " + indexC + "\n")
+				if(indexC > -1){
+					allChannels.splice(indexC, 1);
+					allActive.splice(indexA, 1);
 					PS.debug("all channels spliced: " + allChannels +"\n");
 				}
 				exports.showPlaying(instrument, false);
@@ -225,6 +232,7 @@ var me = ( function () {
 				if(!allChannels.includes(channels.playing)){ //<-- issue, if channel already exists won't add, do by sample name instead
 					//add to all channels 
 					allChannels.push(channels.playing);
+					allActive.push(instrument);
 					PS.debug("all channels: " + allChannels + "\n");
 				}
 			}
@@ -296,10 +304,13 @@ PS.touch = function( x, y, data, options ) {
 		case "play":
 			PS.debug("play all");
 			allChannels.forEach(el=> PS.audioPlayChannel(el, {loop:true}));
+			allActive.forEach(el=> me.showPlaying(el, true));
 			break;
 		case "pause":
 			PS.debug("pause all");
 			allChannels.forEach(el=> PS.audioStop(el));
+			allActive.forEach(el=> me.showPlaying(el, false));
+			
 			break;
 
 
