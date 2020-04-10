@@ -55,13 +55,21 @@ let instruments = ["drum", "piano", "strings", "bass", "guitar"]
 //defined as objects so i can pass as references to func
 let drumsI = {i:0}, stringsI = {i:0}, pianoI = {i:0}, guitarI = {i:0}, bassI = {i:0}
 
+let metronome = "";
+let metOn = false;
+let time = 0;
+
 
 var me = ( function () {
 
 	var mapObject = function(x1, x2, y1, y2, data){
-		var i, j;
+		var i = 0; var j = 0;
 		for(i = x1; i <= x2; i++){
 			for(j = y1; j <= y2; j++){
+				//var color = PS.color(i, j);
+				//PS.debug("color: " + color + "\n");
+				//var temp = data;
+				//temp.push(color);
 				PS.data(i, j, data);
 			}
 		}
@@ -99,26 +107,27 @@ var me = ( function () {
 		
 		init : function () {
 			PS.gridSize( DIM, DIM ); // init grid
-			PS.gridColor( PS.COLOR_WHITE );
+			PS.gridColor( 0xf7ce6b );
+			
 			//PS.border ( PS.ALL, PS.ALL, 0 );
 
+
+		
+			PS.statusColor( PS.COLOR_VIOLET );
+			PS.statusText( "Pixel Band! Press M for metronome" );
+			exports.imageLoad(mapInstruments);
+
+			exports.switchChannels();
+			
+			
+		},
+
+		imageLoad : function(callback){
 			var loaded = function ( image ) {
 				PS.imageBlit( image, 0, 0 );
 			}
-
 			PS.imageLoad ( "./images/pixelband.bmp", loaded );
-			// Change status line color and text
-
-			PS.statusColor( PS.COLOR_VIOLET );
-			PS.statusText( "Pixel Band" );
-
-			//loadSounds();
-			mapInstruments();
-			//whether tile is active, whether or not tile should repeat, and how many times repeats per second (tempo)
-			//cell data:
-			//instruments.forEach(el=>exports.switchChannel(el));
-			exports.switchChannels();
-			
+			callback();
 		},
 
 		switchChannels : function(){
@@ -167,21 +176,49 @@ var me = ( function () {
 			}
 		},
 
-		swapChannels : function(channels, playB){
+		swapChannels : function(channels, playB, instrument, x, y){
 			channels.previous = channels.playing;
 			if(channels.previous != ""){
 				PS.audioStop(channels.previous);
 				allChannels.splice(allChannels.indexOf(channels.previous), 1);
 				PS.debug("all channels spliced: " + allChannels +"\n");
+				//exports.grayscale(x, y, instrument, true);
+				
 			} 
 			if(playB){
 				channels.playing = channels.next;
 				PS.audioPlayChannel(channels.playing, {loop: true});
+				//exports.grayscale(x, y, instrument, false);
 				if(!allChannels.includes(channels.playing)){
 					allChannels.push(channels.playing);
 					PS.debug("all channels: " + allChannels + "\n");
 				}
 			}
+		},
+
+		grayscale : function(x, y, instrument, toGray){
+
+
+			if(toGray){
+
+				if(PS.data(x, y)[0] == instrument && PS.color(x, y) != PS.COLOR_WHITE){
+					var color = PS.unmakeRGB( PS.color( x , y ), {} );
+
+					PS.debug( "r = " + color.r + ", g = " + color.g +
+					", b = " + color.b + "\n" );
+
+					var grayscl = (color.r + color.g + color.b) / 3;
+					PS.debug("grays : " + grayscl + "\n")
+
+					PS.color(x, y, (grayscl, 0, grayscl));
+				}
+			} else if (!toGray){
+				PS.color(x, y, PS.data(x, y)[2]);
+			}
+			//	}
+			//}
+
+			
 		}
 	};
 	
@@ -193,18 +230,14 @@ PS.init = me.init;
 
 /*
 PS.touch ( x, y, data, options )
-Called when the left mouse button is clicked over bead(x, y), or when bead(x, y) is touched.
-This function doesn't have to do anything. Any value returned is ignored.
-[x : Number] = zero-based x-position (column) of the bead on the grid.
-[y : Number] = zero-based y-position (row) of the bead on the grid.
-[data : *] = The JavaScript value previously associated with bead(x, y) using PS.data(); default = 0.
-[options : Object] = A JavaScript object with optional data properties; see API documentation for details.
 */
-
 PS.touch = function( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!
 
 	PS.debug("data " + data);
+	//me.grayscale(x, y);
+	PS.debug("color on cell: " + PS.color(x, y) + "\n");
+	me.grayscale(x, y, "drum", true);
 
 	switch(data[0]){
 		case "drum":
@@ -213,7 +246,7 @@ PS.touch = function( x, y, data, options ) {
 				return;
 			}
 			playButtons[0].play? playButtons[0].play = false: playButtons[0].play = true;
-			me.swapChannels(drumChannels, playButtons[0].play);
+			me.swapChannels(drumChannels, playButtons[0].play, x, y, "drum");
 			break;
 		case "piano":
 			if(data[1] != null){
@@ -222,7 +255,7 @@ PS.touch = function( x, y, data, options ) {
 			}
 			//drum loop
 			playButtons[1].play? playButtons[1].play = false: playButtons[1].play = true;
-			me.swapChannels(pianoChannels, playButtons[1].play);
+			me.swapChannels(pianoChannels, playButtons[1].play, x, y, "piano");
 			break;
 		case "bass":
 			if(data[1] != null){
@@ -230,7 +263,7 @@ PS.touch = function( x, y, data, options ) {
 				return;
 			}
 			playButtons[2].play? playButtons[2].play = false: playButtons[2].play = true;
-			me.swapChannels(bassChannels, playButtons[2].play);
+			me.swapChannels(bassChannels, playButtons[2].play, x, y, "bass");
 			break;
 		case "strings":
 			if(data[1] != null){
@@ -238,7 +271,7 @@ PS.touch = function( x, y, data, options ) {
 				return;
 			}
 			playButtons[3].play? playButtons[3].play = false: playButtons[3].play = true;
-			me.swapChannels(stringsChannels, playButtons[3].play);
+			me.swapChannels(stringsChannels, playButtons[3].play, x, y, "strings");
 			break;
 		case "guitar":
 			if(data[1] != null){
@@ -246,7 +279,7 @@ PS.touch = function( x, y, data, options ) {
 				return;
 			}
 			playButtons[4].play? playButtons[4].play = false: playButtons[4].play = true;
-			me.swapChannels(guitarChannels, playButtons[4].play);
+			me.swapChannels(guitarChannels, playButtons[4].play, x, y, "guitar");
 			break;
 		case "play":
 			PS.debug("play all");
@@ -257,14 +290,8 @@ PS.touch = function( x, y, data, options ) {
 			allChannels.forEach(el=> PS.audioStop(el));
 			break;
 
-			//on switch load channel and set to current drums channel
 
 	}
-
-	
-
-
-	
 
 };
 
@@ -300,32 +327,6 @@ PS.release = function( x, y, data, options ) {
 
 
 /*
-PS.enter ( x, y, button, data, options )
-Called when the mouse cursor/touch enters bead(x, y).
-This function doesn't have to do anything. Any value returned is ignored.
-[x : Number] = zero-based x-position (column) of the bead on the grid.
-[y : Number] = zero-based y-position (row) of the bead on the grid.
-[data : *] = The JavaScript value previously associated with bead(x, y) using PS.data(); default = 0.
-[options : Object] = A JavaScript object with optional data properties; see API documentation for details.
-*/
-
-// UNCOMMENT the following code BLOCK to expose the PS.enter() event handler:
-
-/*
-
-PS.enter = function( x, y, data, options ) {
-	"use strict"; // Do not remove this directive!
-
-	// Uncomment the following code line to inspect x/y parameters:
-
-	// PS.debug( "PS.enter() @ " + x + ", " + y + "\n" );
-
-	// Add code here for when the mouse cursor/touch enters a bead.
-};
-
-*/
-
-/*
 PS.exit ( x, y, data, options )
 Called when the mouse cursor/touch exits bead(x, y).
 This function doesn't have to do anything. Any value returned is ignored.
@@ -353,28 +354,6 @@ PS.exit = function( x, y, data, options ) {
 
 
 
-/*
-PS.exitGrid ( options )
-Called when the mouse cursor/touch exits the grid perimeter.
-This function doesn't have to do anything. Any value returned is ignored.
-[options : Object] = A JavaScript object with optional data properties; see API documentation for details.
-*/
-
-// UNCOMMENT the following code BLOCK to expose the PS.exitGrid() event handler:
-
-/*
-
-PS.exitGrid = function( options ) {
-	"use strict"; // Do not remove this directive!
-
-	// Uncomment the following code line to verify operation:
-
-	// PS.debug( "PS.exitGrid() called\n" );
-
-	// Add code here for when the mouse cursor/touch moves off the grid.
-};
-
-*/
 
 /*
 PS.keyDown ( key, shift, ctrl, options )
@@ -392,10 +371,27 @@ This function doesn't have to do anything. Any value returned is ignored.
 
 PS.keyDown = function( key, shift, ctrl, options ) {
 	"use strict"; // Do not remove this directive!
-
-	repeat = key == 114 ? true : false;
 	
-	PS.debug("repeat down: " + repeat);
+	if(key == 109 || key == 77){
+		if(metOn){
+			metOn = false;
+			PS.timerStop(metronome);
+			time = 0;
+			PS.statusColor( PS.COLOR_VIOLET );
+			PS.statusText( "Pixel Band! Press M for metronome" );
+		} else {
+			metOn = true;
+			metronome = PS.timerStart(30, function (){
+				time == 8 ? time = 1: time++;
+				PS.statusColor( PS.COLOR_WHITE );
+				PS.statusText( "Keep Time: "+ time);
+				PS.audioPlay("fx_tick");
+			});
+		}
+
+	} 
+	
+	
 	
 
 };
@@ -418,62 +414,12 @@ This function doesn't have to do anything. Any value returned is ignored.
 PS.keyUp = function( key, shift, ctrl, options ) {
 	"use strict"; // Do not remove this directive!
 
-	repeat = false;
-	PS.debug("repeat up: " + repeat);
+	
+	
 
 };
 
 
 
-/*
-PS.input ( sensors, options )
-Called when a supported input device event (other than those above) is detected.
-This function doesn't have to do anything. Any value returned is ignored.
-[sensors : Object] = A JavaScript object with properties indicating sensor status; see API documentation for details.
-[options : Object] = A JavaScript object with optional data properties; see API documentation for details.
-NOTE: Currently, only mouse wheel events are reported, and only when the mouse cursor is positioned directly over the grid.
-*/
 
-// UNCOMMENT the following code BLOCK to expose the PS.input() event handler:
 
-/*
-
-PS.input = function( sensors, options ) {
-	"use strict"; // Do not remove this directive!
-
-	// Uncomment the following code lines to inspect first parameter:
-
-//	 var device = sensors.wheel; // check for scroll wheel
-//
-//	 if ( device ) {
-//	   PS.debug( "PS.input(): " + device + "\n" );
-//	 }
-
-	// Add code here for when an input event is detected.
-};
-
-*/
-
-/*
-PS.shutdown ( options )
-Called when the browser window running Perlenspiel is about to close.
-This function doesn't have to do anything. Any value returned is ignored.
-[options : Object] = A JavaScript object with optional data properties; see API documentation for details.
-NOTE: This event is generally needed only by applications utilizing networked telemetry.
-*/
-
-// UNCOMMENT the following code BLOCK to expose the PS.shutdown() event handler:
-
-/*
-
-PS.shutdown = function( options ) {
-	"use strict"; // Do not remove this directive!
-
-	// Uncomment the following code line to verify operation:
-
-	// PS.debug( "“Dave. My mind is going. I can feel it.”\n" );
-
-	// Add code here to tidy up when Perlenspiel is about to close.
-};
-
-*/
