@@ -109,12 +109,12 @@ var me = ( function () {
 			PS.gridSize( DIM, DIM ); // init grid
 			PS.gridColor( 0xf7ce6b );
 			
-			//PS.border ( PS.ALL, PS.ALL, 0 );
+			PS.border ( PS.ALL, PS.ALL, 0 );
 
 
 		
-			PS.statusColor( PS.COLOR_VIOLET );
-			PS.statusText( "Pixel Band! Press M for metronome" );
+			PS.statusColor( PS.COLOR_WHITE);
+			PS.statusText( "Press M for metronome" );
 			exports.imageLoad(mapInstruments);
 
 			exports.switchChannels();
