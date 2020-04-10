@@ -122,6 +122,17 @@ var me = ( function () {
 			
 		},
 
+		showPlaying : function(instrument){
+			switch(instrument){
+				case "drum":
+					break;
+				case "piano":
+					break;
+				case "":
+					break;
+			}
+		},
+
 		imageLoad : function(callback){
 			var loaded = function ( image ) {
 				PS.imageBlit( image, 0, 0 );
@@ -180,15 +191,17 @@ var me = ( function () {
 			channels.previous = channels.playing;
 			if(channels.previous != ""){
 				PS.audioStop(channels.previous);
-				allChannels.splice(allChannels.indexOf(channels.previous), 1);
+				var index = allChannels.indexOf(channels.previous);
+				PS.debug("spliced index: " + index + "\n")
+				allChannels.splice(index, 1);
 				PS.debug("all channels spliced: " + allChannels +"\n");
-				//exports.grayscale(x, y, instrument, true);
+				//exports.showPlaying(instrument);
 				
 			} 
 			if(playB){
 				channels.playing = channels.next;
 				PS.audioPlayChannel(channels.playing, {loop: true});
-				//exports.grayscale(x, y, instrument, false);
+				//exports.showPlaying(instrument);
 				if(!allChannels.includes(channels.playing)){
 					allChannels.push(channels.playing);
 					PS.debug("all channels: " + allChannels + "\n");
