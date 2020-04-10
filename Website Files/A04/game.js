@@ -26,11 +26,11 @@ Called once after engine is initialized but before event-polling begins.
 let DIM = 32;
 
 //keep track of instrument channels for swapping samples
-let drumChannels = {next: "", previous: "", playing: ""};
-let pianoChannels = {next: "", previous: "", playing: ""};
-let stringsChannels = {next: "", previous: "", playing: ""};
-let bassChannels = {next: "", previous: "", playing: ""};
-let guitarChannels = {next: "", previous: "", playing: ""};
+let drumChannels = {next: "", previous: "", playing: "", catch: ""};
+let pianoChannels = {next: "", previous: "", playing: "", catch: ""};
+let stringsChannels = {next: "", previous: "", playing: "", catch: ""};
+let bassChannels = {next: "", previous: "", playing: "", catch: ""};
+let guitarChannels = {next: "", previous: "", playing: "", catch: ""};
 
 //individual instrument play/pause variables
 let playButtons = [{play: false}, {play: false}, {play: false}, {play: false}, {play: false}, ]
@@ -154,62 +154,70 @@ var me = ( function () {
 
 		//handles init sound loading
 		switchChannels : function(){
-			exports.switchAll(drums, drumsI, drumChannels, "./Drums/");
-			exports.switchAll(piano, pianoI, pianoChannels, "./Piano/");
-			exports.switchAll(bass, bassI, bassChannels, "./Bass/");
-			exports.switchAll(guitar, guitarI, guitarChannels, "./Guitar/");
-			exports.switchAll(synth, stringsI, stringsChannels, "./Strings/");
+			exports.switchDrum();
+			exports.switchPiano();
+			exports.switchBass();
+			exports.switchGuitar();
+			exports.switchString();
 
 		},
 		//catch all function for loading new sample when arrow for instrument is clicked, or pause/play is
-		switchAll : function(array, index, channels, path){
-			//PS.debug("current previous: " + array[index.i]);
-			var loader = function ( data ) {
+		switchAll : function(array, index, channels, path, playB, instrument, callback){
+
+			PS.audioLoad( array[index.i], {path: path, fileTypes: ["mp3"], onLoad : function(data){
 				channels.next = data.channel; // save ID
-			};
-			   
-			PS.audioLoad( array[index.i], {path: path, fileTypes: ["mp3"], onLoad : loader });
-			//PS.debug("current channel: " + array[index.i]);
+				PS.debug("loading don!\n");
+				callback(channels, playB, instrument);
+				} 
+			});
+
 		},
-		
+
 		//below are individualized switchAll calls for each instrument to make sure they all have correct
 		//paths and variables assigned; again, this could've been simplified further, I'm working on it :)
 		switchDrum : function(){
-			exports.switchAll(drums, drumsI, drumChannels, "./Drums/");
+			exports.switchAll(drums, drumsI, drumChannels, "./Drums/", playButtons[0].play, "drum",exports.swapChannels);
 		},
 		switchPiano : function(){
-			exports.switchAll(piano, pianoI, pianoChannels, "./Piano/");
+			exports.switchAll(piano, pianoI, pianoChannels, "./Piano/", playButtons[1].play,"piano", exports.swapChannels);
 		},
 		switchBass : function(){
-			exports.switchAll(bass, bassI, bassChannels, "./Bass/");
+			exports.switchAll(bass, bassI, bassChannels, "./Bass/", playButtons[2].play, "bass", exports.swapChannels);
 		},
 		switchString : function(){
-			exports.switchAll(synth, stringsI, stringsChannels, "./Strings/");
+			exports.switchAll(synth, stringsI, stringsChannels, "./Strings/", playButtons[3].play, "strings", exports.swapChannels);
 		},
 		switchGuitar : function(){
-			exports.switchAll(guitar, guitarI, guitarChannels, "./Guitar/");
+			exports.switchAll(guitar, guitarI, guitarChannels, "./Guitar/", playButtons[4].play, "guitar", exports.swapChannels);
 		},
 
 		//handle swapping instrument samples, decide which way to parse each
 		//sample array based on cell data - subtract means go left, add means go right
 		sampleSwap : function(samples, index, func, action, channels, playB, instrument){
-			PS.debug(samples + index + action);
 			//set index which should be changed bc can't pass by ref
-			
 			if(action == "subtract"){
 				index.i = index.i - 1 > -1? index.i - 1: samples.length - 1; //loop to avoid out of bounds
 			} else if(action == "add"){
 				index.i = index.i + 1 < samples.length -1? index.i+ 1: 0; 
 			}
+			PS.debug("index " + index.i + stringsI.i);
 			func(); //passed in switch function for that instrument
-			exports.swapChannels(channels, playB, instrument); //autoplay
+
 		},
 
 		//handles starting and stopping of sample files, and keeping track of previous file
 		//played to make sure only 1 sample is playing per instrument at a time
 		swapChannels : function(channels, playB, instrument){
-			channels.previous = channels.playing;
+			PS.debug("next: " + channels.next + "\n");
+			//PS.debug("previous: " + channels.previous + "\nplaying: " + channels.playing + "\n");
+			if(channels.previous == ""){
+				PS.debug("This is not gonna switch correctly \n");
 
+			}
+			//channels.playing = channels.playing == ""? channels.next: channels.playing; 
+			channels.previous = channels.playing;
+			PS.debug("previous: " + channels.previous + "\nplaying: " + channels.playing + "\n");
+			
 			//stop play
 			if(channels.previous != ""){ //catch error if this is first sample played
 				PS.audioStop(channels.previous);
@@ -221,10 +229,11 @@ var me = ( function () {
 					allChannels.splice(indexC, 1);
 					allActive.splice(indexA, 1);
 					PS.debug("all channels spliced: " + allChannels +"\n");
+					PS.debug("---------------------------\n");
 				}
 				exports.showPlaying(instrument, false);
 				
-			} 
+			}
 			if(playB){ //check if allowed to play
 				channels.playing = channels.next;
 				PS.audioPlayChannel(channels.playing, {loop: true});
@@ -234,6 +243,7 @@ var me = ( function () {
 					allChannels.push(channels.playing);
 					allActive.push(instrument);
 					PS.debug("all channels: " + allChannels + "\n");
+					PS.debug("*********************\n");
 				}
 			}
 		},
@@ -251,7 +261,7 @@ PS.touch ( x, y, data, options )
 PS.touch = function( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!
 
-	PS.debug("data " + data);
+	PS.debug("data " + data +"\n");
 
 	//handles swap sample + play/pause calls for each instrument when touching anywhere on instrument
 	//handles play + pause all buttons
@@ -262,6 +272,7 @@ PS.touch = function( x, y, data, options ) {
 			if(data[1] != null){ //data[1] != null indicates an arrow, so a sample swap
 				//samples, index, func, action, channels, playB, instrument
 				me.sampleSwap(drums, drumsI, me.switchDrum, data[1], drumChannels, playButtons[0].play, "drum");
+				// exports.swapChannels(drumChannels, playButtons[0].play,  "drum"); //autoplay
 				return;
 			}
 			//check if sample already playing - if not, set to playing
@@ -288,6 +299,7 @@ PS.touch = function( x, y, data, options ) {
 		case "strings":
 			if(data[1] != null){
 				me.sampleSwap(synth, stringsI, me.switchString, data[1], stringsChannels, playButtons[3].play, "strings");
+				//me.swapChannels(stringsChannels, playButtons[3].play, "strings"); //autoplay
 				return;
 			}
 			playButtons[3].play? playButtons[3].play = false: playButtons[3].play = true;
