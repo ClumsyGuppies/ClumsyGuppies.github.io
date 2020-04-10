@@ -139,8 +139,6 @@ var me = ( function () {
 				show ? PS.color(coord.x, i, PS.COLOR_GREEN):PS.color(coord.x, i, PS.COLOR_WHITE);
 			}
 			
-			//show? PS.color(coord.x, coord.y, PS.COLOR_GREEN): PS.color(coord.x, coord.y, PS.COLOR_WHITE);
-
 		},
 
 		//load bmp + call map instruments
@@ -166,7 +164,7 @@ var me = ( function () {
 
 			PS.audioLoad( array[index.i], {path: path, fileTypes: ["mp3"], onLoad : function(data){
 				channels.next = data.channel; // save ID
-				PS.debug("loading don!\n");
+				//PS.debug("loading don!\n");
 				callback(channels, playB, instrument);
 				} 
 			});
@@ -200,7 +198,7 @@ var me = ( function () {
 			} else if(action == "add"){
 				index.i = index.i + 1 < samples.length -1? index.i+ 1: 0; 
 			}
-			PS.debug("index " + index.i + stringsI.i);
+			//PS.debug("samples.length " + samples.length + index.i);
 			func(); //passed in switch function for that instrument
 
 		},
@@ -208,15 +206,15 @@ var me = ( function () {
 		//handles starting and stopping of sample files, and keeping track of previous file
 		//played to make sure only 1 sample is playing per instrument at a time
 		swapChannels : function(channels, playB, instrument){
-			PS.debug("next: " + channels.next + "\n");
+			//PS.debug("next: " + channels.next + "\n");
 			//PS.debug("previous: " + channels.previous + "\nplaying: " + channels.playing + "\n");
 			if(channels.previous == ""){
-				PS.debug("This is not gonna switch correctly \n");
+				//PS.debug("This is not gonna switch correctly \n");
 
 			}
 			//channels.playing = channels.playing == ""? channels.next: channels.playing; 
 			channels.previous = channels.playing;
-			PS.debug("previous: " + channels.previous + "\nplaying: " + channels.playing + "\n");
+			//PS.debug("previous: " + channels.previous + "\nplaying: " + channels.playing + "\n");
 			
 			//stop play
 			if(channels.previous != ""){ //catch error if this is first sample played
@@ -224,12 +222,12 @@ var me = ( function () {
 				//remove stopped channel from all channels to make sure doesn't play again
 				var indexC = allChannels.indexOf(channels.previous);
 				var indexA = allActive.indexOf(instrument);
-				PS.debug("spliced index: " + indexC + "\n")
+				//PS.debug("spliced index: " + indexC + "\n")
 				if(indexC > -1){
 					allChannels.splice(indexC, 1);
 					allActive.splice(indexA, 1);
-					PS.debug("all channels spliced: " + allChannels +"\n");
-					PS.debug("---------------------------\n");
+					//PS.debug("all channels spliced: " + allChannels +"\n");
+					//PS.debug("---------------------------\n");
 				}
 				exports.showPlaying(instrument, false);
 				
@@ -242,8 +240,8 @@ var me = ( function () {
 					//add to all channels 
 					allChannels.push(channels.playing);
 					allActive.push(instrument);
-					PS.debug("all channels: " + allChannels + "\n");
-					PS.debug("*********************\n");
+					//PS.debug("all channels: " + allChannels + "\n");
+					//PS.debug("*********************\n");
 				}
 			}
 		},
@@ -261,7 +259,7 @@ PS.touch ( x, y, data, options )
 PS.touch = function( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!
 
-	PS.debug("data " + data +"\n");
+	//PS.debug("data " + data +"\n");
 
 	//handles swap sample + play/pause calls for each instrument when touching anywhere on instrument
 	//handles play + pause all buttons
@@ -299,7 +297,6 @@ PS.touch = function( x, y, data, options ) {
 		case "strings":
 			if(data[1] != null){
 				me.sampleSwap(synth, stringsI, me.switchString, data[1], stringsChannels, playButtons[3].play, "strings");
-				//me.swapChannels(stringsChannels, playButtons[3].play, "strings"); //autoplay
 				return;
 			}
 			playButtons[3].play? playButtons[3].play = false: playButtons[3].play = true;
@@ -314,12 +311,12 @@ PS.touch = function( x, y, data, options ) {
 			me.swapChannels(guitarChannels, playButtons[4].play, "guitar");
 			break;
 		case "play":
-			PS.debug("play all");
+			//PS.debug("play all");
 			allChannels.forEach(el=> PS.audioPlayChannel(el, {loop:true}));
 			allActive.forEach(el=> me.showPlaying(el, true));
 			break;
 		case "pause":
-			PS.debug("pause all");
+			//PS.debug("pause all");
 			allChannels.forEach(el=> PS.audioStop(el));
 			allActive.forEach(el=> me.showPlaying(el, false));
 			
@@ -413,8 +410,8 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 			metOn = false;
 			PS.timerStop(metronome);
 			time = 0;
-			PS.statusColor( PS.COLOR_VIOLET );
-			PS.statusText( "Pixel Band! Press M for metronome" );
+			PS.statusColor( PS.COLOR_WHITE );
+			PS.statusText( "Press M for metronome" );
 		} else {
 			metOn = true;
 			metronome = PS.timerStart(30, function (){ //tempo = 120 bpm, set status text to counter for visual aid
