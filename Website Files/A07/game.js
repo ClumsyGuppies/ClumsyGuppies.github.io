@@ -17,6 +17,11 @@ LIGHT_BLUE= 0x2bc7d9;
 ORANGE= 0xf2ae72;
 colors= [GRAY, LIGHT_BLUE, LIGHT_GREEN, LIGHT_RED, LAVENDER, ORANGE, PURPLE];
 
+//music
+//home, food, closet, play, stats
+let allMusic = [{m: ''}, {m: ''}, {m: ''}, {m: ''}, {m: ''}]
+var current_music = '';
+
 //["feed", "dress", "play", "clean", "home", "stats"]
 //["baby", "teen", "adult"]
 let DIM = 32;
@@ -185,6 +190,29 @@ var me = ( function () {
 		}
 	};
 
+	var loadMusic = function(filename, index, fileType){
+		PS.audioLoad( filename, {path: '/music/', fileTypes: [fileType], onLoad : function(data){
+			 allMusic[index].m = data.channel; // save ID
+			PS.debug(allMusic[index].m + " loading done!\n");
+			} 
+		});
+	};
+
+	var loadAllMusic = function(){
+		//home, food, closet, play, stats
+		loadMusic('food_music', 1, 'mp3');
+		loadMusic('closet_music', 2, 'mp3');
+		loadMusic('main_music', 0, 'ogg');
+		loadMusic('stats_music', 4, 'ogg');
+	};
+
+		/**	var loader = function ( data ) {
+		music = data.channel; // save ID
+	};
+
+	//PS.audioLoad( "omake-pfadlib", {path: "./", fileTypes: ["mp3"], onLoad : loader }); */
+	
+
 	var drawMap = function () {
 		PS.gridPlane( PLANE_MAIN );
 
@@ -210,6 +238,7 @@ var me = ( function () {
 	};
 
 	var loadSprites = function(){
+		loadAllMusic();
 		// Load all images in succession
 		PS.imageLoad( "sprites/background.bmp", function ( data ) {
 			PS.debug( "background loaded\n" ); 
@@ -289,30 +318,37 @@ var me = ( function () {
 				} );
 			} );
 		} );
+		//callback(homeMusic, {loop: true});
 	};
 
 	var exports = {
 
 		init : function () {
 			PS.gridSize( DIM, DIM ); // init grid
-			PS.gridColor( 0xf0cfff );
+			PS.gridColor( 0xf3b2ac );
 			PS.border( PS.ALL, PS.ALL, 0 );
 
 			
 			var complete = function(){
 				loadSprites();
+				PS.audioPlayChannel(allMusic[0].m, {loop:true});
+				current_music = allMusic[0].m;
 			}
 			loadSprites();
+
+			//PS.audioPlayChannel(homeMusic, {loop: true});
+			loadAllMusic();
 			
 			// Change status line color and text
 
 			PS.statusColor(DARK_GREEN);
 			PS.statusText( "Meet Corona! Click to say hi." );
 
-			//DB.active(true);
-			DB.active(false);
-			//DB.init("Coronagotchi", complete);
-			
+			DB.active(true);
+			//DB.active(false);
+			DB.init("Coronagotchi", complete);
+			//PS.audioPlayChannel(allMusic[0].m, {loop:true});
+			//current_music = allMusic[0].m;
 			//don't implement for prototype
 			//ageTimer = PS.timerStart( 300, statsData.ageTick );
 			//meterTimer = PS.timerStart( 300, statsData.meterTick );
@@ -414,6 +450,7 @@ PS.touch ( x, y, data, options )
 
 PS.touch = function ( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!
+	//home, food, closet, play, stats
 	
 	switch ( data ) {
 		case "feed":
@@ -421,12 +458,18 @@ PS.touch = function ( x, y, data, options ) {
 			PS.statusText("It's feeding time!");
 			me.reset();
 			openFoodGame = true;
+			PS.audioStop(current_music);
+			PS.audioPlayChannel( allMusic[1].m, {loop: true});
+			current_music =  allMusic[1].m;
 			PS.debug( "food time\n" );
-			break;
+		break;
 		case "home":
 			state = "home";
 			PS.statusText("Corona's Home");
 			me.reset();
+			PS.audioStop(current_music);
+			PS.audioPlayChannel( allMusic[0].m, {loop: true});
+			current_music =  allMusic[0].m;
 			PS.debug( "home time\n" );
 			break;
 		case "stats":
@@ -434,7 +477,12 @@ PS.touch = function ( x, y, data, options ) {
 			state = "stats";
 			me.reset();
 			statsData.drawStats();
+			PS.debug("value of stats channel  " + allMusic[4].m   + "\n");
+			PS.audioStop(current_music);
+			PS.audioPlayChannel( allMusic[4].m, {loop: true});
+			current_music =  allMusic[4].m;
 			PS.debug( "stats time\n" );
+
 			break;
 		case "play":
 			PS.statusText("Play Time!");
@@ -448,6 +496,9 @@ PS.touch = function ( x, y, data, options ) {
 			me.reset();
 			dress.drawOutfits();
 			canMove = false;
+			PS.audioStop(current_music);
+			PS.audioPlayChannel( allMusic[2].m, {loop: true});
+			current_music =  allMusic[2].m;
 			PS.debug( "dress time\n" );
 			break;
 		case "leftArrow":

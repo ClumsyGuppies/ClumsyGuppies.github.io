@@ -44,7 +44,7 @@ var foodGame = {
         var speed = PS.random(100);
         
         
-        if(speed > 50){
+        if(speed > 75){
             return;
         }
 

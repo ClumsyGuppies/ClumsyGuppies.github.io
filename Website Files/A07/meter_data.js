@@ -116,6 +116,13 @@ var statsData = {
         //sad and happy face
         PS.glyph(2, 12, 0);
         PS.glyph(29, 12, 0);
+
+        var temp = happy;
+        if(current_data != bigBase_data){
+            happy+=3;
+        } else {
+            happy = temp - 3;
+        }
     },
     
     //handles decrease over time of hunger/happy and increase over time of age
