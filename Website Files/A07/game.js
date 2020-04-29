@@ -206,13 +206,6 @@ var me = ( function () {
 		loadMusic('stats_music', 4, 'ogg');
 	};
 
-		/**	var loader = function ( data ) {
-		music = data.channel; // save ID
-	};
-
-	//PS.audioLoad( "omake-pfadlib", {path: "./", fileTypes: ["mp3"], onLoad : loader }); */
-	
-
 	var drawMap = function () {
 		PS.gridPlane( PLANE_MAIN );
 
