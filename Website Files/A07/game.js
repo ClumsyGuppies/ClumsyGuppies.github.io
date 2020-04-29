@@ -383,6 +383,9 @@ var me = ( function () {
 
 			openFoodGame = false;
 
+			//PS.debug("reloading background!");
+			PS.spritePlane( background_sprite, PLANE_MAIN ); // assign plane
+			PS.spriteMove( background_sprite, 0, 0 ); // move to initial position
 			statsData.clearStats();
 			PS.spriteShow(arrowLeft, false);
 			PS.spriteShow(arrowRight, false );
