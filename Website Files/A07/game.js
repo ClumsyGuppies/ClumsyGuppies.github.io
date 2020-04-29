@@ -191,7 +191,7 @@ var me = ( function () {
 	};
 
 	var loadMusic = function(filename, index, fileType){
-		PS.audioLoad( filename, {path: '/music/', fileTypes: [fileType], onLoad : function(data){
+		PS.audioLoad( filename, {path: 'music/', fileTypes: [fileType], onLoad : function(data){
 			 allMusic[index].m = data.channel; // save ID
 			PS.debug(allMusic[index].m + " loading done!\n");
 			} 
