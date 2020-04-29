@@ -57,7 +57,7 @@ var foodGame = {
             if(e.sprite_ref == null){
                 return;
             }
-            PS.debug("sprite_ref: "+ e.sprite_ref + " " + PS.spriteShow(e.sprite_ref)+ "\n");
+            // PS.debug("sprite_ref: "+ e.sprite_ref + " " + PS.spriteShow(e.sprite_ref)+ "\n");
 
             PS.spriteMove(e.sprite_ref, e.x, e.y);
             e.step+= 1;
@@ -67,14 +67,14 @@ var foodGame = {
                 if(type == "food"){
                     var index = foodGame.fallingFood.indexOf(e);
 
-                    PS.debug(e.sprite_ref + " food has reached end, delete!\n")
+                    // PS.debug(e.sprite_ref + " food has reached end, delete!\n")
 
                     foodGame.fallingFood.splice(index, 1);
                 } else {
                     //var find = foodGame.fallingVacc.find(e);
                     var index = foodGame.fallingVacc.indexOf(e);
 
-                    PS.debug(e.sprite_ref + " vaccine has reached end, delete!\n")
+                    // PS.debug(e.sprite_ref + " vaccine has reached end, delete!\n")
 
                     foodGame.fallingVacc.splice(index, 1);
                     

@@ -23,7 +23,7 @@ var dress = {
     //load all outfit sprites and store data
     loadOutfits: function(){
         PS.imageLoad( "sprites/outfits/bigCorona.bmp", function ( data ) {
-			PS.debug( "big corona loaded\n" );
+			// PS.debug( "big corona loaded\n" );
 
 			bigBase_data = data; // save image data
             big_width = data.width;
@@ -38,27 +38,27 @@ var dress = {
 			PS.spritePlane( coronaCurrent_sprite, PLANE_CORONA ); // assign plane
 			PS.spriteMove( coronaCurrent_sprite, 9,  DIM - big_width - 3); // move to initial position
 			//PS.spriteCollide(corona_sprite, coronaCollide); //define collision function for corona
-            PS.debug("beeg: " + bigBase_data + "\n");
+            // PS.debug("beeg: " + bigBase_data + "\n");
 			PS.imageLoad( "sprites/outfits/coronaBow.bmp", function ( data ) {
-				PS.debug( "bowtie loaded\n" );
+				// PS.debug( "bowtie loaded\n" );
 				bowtie_data = data; // save image data
 				bowtie_width = data.width; // save image data
                 bowtie = PS.spriteImage(bowtie_data);
 				
 				PS.imageLoad( "sprites/outfits/coronaSunglasses.bmp", function ( data ) {
-                    PS.debug( "sunglasses loaded\n" );
+                    // PS.debug( "sunglasses loaded\n" );
 					sunglasses_data = data; // save image data
                     sunglasses_width = data.width; // save image data
                     sunglasses = PS.spriteImage(sunglasses_data);
                     
 					PS.imageLoad( "sprites/outfits/cowboyCorona.bmp", function ( data ) {
-                        PS.debug( "cowboy loaded\n" );
+                        // PS.debug( "cowboy loaded\n" );
 						cowboy_data = data; // save image data
                         cowboy_width = data.width; // save image data
                         cowboy = PS.spriteImage(cowboy_data);
 						
 						PS.imageLoad( "sprites/outfits/prideCorona.bmp", function ( data ) {
-                            PS.debug( "pride loaded\n" );
+                            // PS.debug( "pride loaded\n" );
                             pride_data = data; // save image data
                             pride_width = data.width; // save image data
                             pride = PS.spriteImage(pride_data);
@@ -89,11 +89,11 @@ var dress = {
         PS.spritePlane( coronaCurrent_sprite, PLANE_CORONA ); // assign plane
         PS.spriteMove( coronaCurrent_sprite, this.outfits[this.outfitIndex].x, this.outfits[this.outfitIndex].y ); // move to initial position
 
-        PS.debug("outfit index is? " + this.outfitIndex + "\n");
+        // PS.debug("outfit index is? " + this.outfitIndex + "\n");
     },
 
     drawOutfits : function(){
-        PS.debug("draw outfit called");
+        // PS.debug("draw outfit called");
         corona_x = 9;
         corona_y = 10;
 		corona_width = bigBase_data.width;
@@ -112,7 +112,7 @@ var dress = {
 
         this.outfits.unshift({sprite: bigBase_data, x: 9, y: 10, width: big_width}, {sprite: cowboy_data, x:8, y: 7, width: corona_width}, 
             {sprite: bowtie_data, x: 9, y: 9, width: bowtie_width}, {sprite: pride_data, x: 9, y: 10, width: pride_width}, {sprite: sunglasses_data, x: 6, y: 10, width: sunglasses_width});
-        this.outfits.forEach(e=>PS.debug(e+"\n"));
+        // this.outfits.forEach(e=>PS.debug(e+"\n"));
 
 
         //draw outfit options at top

@@ -118,20 +118,20 @@ var me = ( function () {
 		if(s2 == background_sprite){
 			return;
 		}
-		PS.debug("value of collider: " + s2 + "\n")
+		//PS.debug("value of collider: " + s2 + "\n")
 		fullObj = foodGame.fallingFood.find(el=> el.sprite_ref == s2);
         
         if(fullObj == undefined){ //falling object is a vaccine, not a food
             fullObj = foodGame.fallingVacc.find(el=> el.sprite_ref == s2);
             index = foodGame.fallingVacc.indexOf(fullObj);//find obj in active array
-			PS.debug("I have collided with vaccine!\n");
+			//PS.debug("I have collided with vaccine!\n");
 			hunger-=3;
 			checkDead();
 			
         } else {
 			
 			index = foodGame.fallingFood.indexOf(fullObj);
-			PS.debug("I have collided with food!\n");
+			//PS.debug("I have collided with food!\n");
 			hunger+=3;
 			checkDead();
 
@@ -193,7 +193,7 @@ var me = ( function () {
 	var loadMusic = function(filename, index, fileType){
 		PS.audioLoad( filename, {path: 'music/', fileTypes: [fileType], onLoad : function(data){
 			 allMusic[index].m = data.channel; // save ID
-			PS.debug(allMusic[index].m + " loading done!\n");
+			//PS.debug(allMusic[index].m + " loading done!\n");
 			} 
 		});
 	};
@@ -241,14 +241,14 @@ var me = ( function () {
 		loadAllMusic();
 		// Load all images in succession
 		PS.imageLoad( "sprites/background.bmp", function ( data ) {
-			PS.debug( "background loaded\n" ); 
+			//PS.debug( "background loaded\n" ); 
 			background_data = data; // save image data
 			background_sprite = PS.spriteImage(background_data);
 
 			PS.spritePlane( background_sprite, PLANE_MAIN ); // assign plane
 			PS.spriteMove( background_sprite, 0, 0 ); // move to initial position
 			PS.imageLoad( "sprites/smallestCoronaSprite.bmp", function ( data ) {
-				PS.debug( "corona loaded\n" );
+				//PS.debug( "corona loaded\n" );
 
 				coronaSmall_data = data; // save image data
 				coronaSmall_width = data.width;
@@ -260,40 +260,40 @@ var me = ( function () {
 				// PS.spriteCollide(coronaSmall_sprite, coronaCollide); //define collision function for corona
 				
 				PS.imageLoad( "sprites/bloodCell.gif", function ( data ) {
-					PS.debug( "food loaded\n" );
+				//	PS.debug( "food loaded\n" );
 					food_data = data; // save image data
 					food_width = data.width;
 					
 					PS.imageLoad( "sprites/vaccine.gif", function ( data ) {
-						PS.debug( "vaccine loaded\n" );
+					//	PS.debug( "vaccine loaded\n" );
 						vaccine_width = data.width; 
 						vaccine_data = data; // save image data
 
 						PS.imageLoad( "sprites/ageMeter.bmp", function ( data ) {
-							PS.debug( "age loaded\n" );
+						//	PS.debug( "age loaded\n" );
 							age_width = data.width; 
 							age_data = data; // save image data
 							age_sprite = PS.spriteImage(age_data);
 							
 							PS.imageLoad( "sprites/happyMeter.bmp", function ( data ) {
-								PS.debug( "hap loaded\n" );
+								// PS.debug( "hap loaded\n" );
 								happy_width = data.width; 
 								happy_data = data; // save image data
 								happy_sprite = PS.spriteImage(happy_data);
 								
 								PS.imageLoad( "sprites/hungerMeter.bmp", function ( data ) {
-									PS.debug( "hung loaded\n" );
+									// PS.debug( "hung loaded\n" );
 									hunger_width = data.width; 
 									hunger_data = data; // save image data
 									hunger_sprite = PS.spriteImage(hunger_data);
 
 									PS.imageLoad( "sprites/arrowLeft.bmp", function ( data ) {
-										PS.debug( "left arrow loaded\n" );
+										// PS.debug( "left arrow loaded\n" );
 										arrowLeft_data = data; // save image data
 										arrowLeft = PS.spriteImage( arrowLeft_data );
 										
 										PS.imageLoad( "sprites/arrowRight.bmp", function ( data ) {
-											PS.debug( "arrow right loaded\n" );
+											// PS.debug( "arrow right loaded\n" );
 											arrowRight_data = data; // save image data
 											arrowRight = PS.spriteImage( arrowRight_data );
 											
@@ -406,7 +406,7 @@ var me = ( function () {
 			} else {
 				//beeg beeg corona so you can see outfit
 				PS.spriteShow(coronaCurrent_sprite, false);
-				PS.debug("bee2g: " + bigBase_data + "\n");
+				// PS.debug("bee2g: " + bigBase_data + "\n");
 				if(current_data == ''){
 					current_data = bigBase_data;
 				}
@@ -461,7 +461,7 @@ PS.touch = function ( x, y, data, options ) {
 			PS.audioStop(current_music);
 			PS.audioPlayChannel( allMusic[1].m, {loop: true});
 			current_music =  allMusic[1].m;
-			PS.debug( "food time\n" );
+			// PS.debug( "food time\n" );
 		break;
 		case "home":
 			state = "home";
@@ -470,25 +470,25 @@ PS.touch = function ( x, y, data, options ) {
 			PS.audioStop(current_music);
 			PS.audioPlayChannel( allMusic[0].m, {loop: true});
 			current_music =  allMusic[0].m;
-			PS.debug( "home time\n" );
+			// PS.debug( "home time\n" );
 			break;
 		case "stats":
 			PS.statusText("Corona's Stats");
 			state = "stats";
 			me.reset();
 			statsData.drawStats();
-			PS.debug("value of stats channel  " + allMusic[4].m   + "\n");
+			// PS.debug("value of stats channel  " + allMusic[4].m   + "\n");
 			PS.audioStop(current_music);
 			PS.audioPlayChannel( allMusic[4].m, {loop: true});
 			current_music =  allMusic[4].m;
-			PS.debug( "stats time\n" );
+			// PS.debug( "stats time\n" );
 
 			break;
 		case "play":
 			PS.statusText("Play Time!");
 			state = "play";
 			//me.reset();
-			PS.debug( "play time\n" );
+			// PS.debug( "play time\n" );
 			break;
 		case "dress":
 			PS.statusText("Corona's Closet");
@@ -499,14 +499,14 @@ PS.touch = function ( x, y, data, options ) {
 			PS.audioStop(current_music);
 			PS.audioPlayChannel( allMusic[2].m, {loop: true});
 			current_music =  allMusic[2].m;
-			PS.debug( "dress time\n" );
+			// PS.debug( "dress time\n" );
 			break;
 		case "leftArrow":
-			PS.debug( "left arrow clicked time\n" );
+			// PS.debug( "left arrow clicked time\n" );
 			dress.swapSprite(true);
 			break;
 		case "rightArrow":
-			PS.debug( "right arrow clicked\n" );
+			// PS.debug( "right arrow clicked\n" );
 			dress.swapSprite(false);
 			break;
 		default:

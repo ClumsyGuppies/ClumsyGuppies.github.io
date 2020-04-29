@@ -129,7 +129,7 @@ var statsData = {
     meterTick : function(){
         hunger-=3;
         happy-=3;
-        PS.debug("happy and hunger have decreased! " + happy+" " + hunger + "\n");
+        // PS.debug("happy and hunger have decreased! " + happy+" " + hunger + "\n");
         if(hunger < 0){
             PS.statusText("Oh no, Corona died of starvation!");
         }
@@ -139,7 +139,7 @@ var statsData = {
     
     ageTick : function(){
         age+=7;
-        PS.debug("age has changed! " + age+"\n");
+        // PS.debug("age has changed! " + age+"\n");
        // this.fillMeter("age", false);
     }
 
