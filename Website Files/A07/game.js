@@ -2,116 +2,467 @@
 game.js for Perlenspiel 3.3.x
 Last revision: 2018-10-14 (BM)
 
-Perlenspiel is a scheme by Professor Moriarty (bmoriarty@wpi.edu).
-This version of Perlenspiel (3.3.x) is hosted at <https://ps3.perlenspiel.net>
-Perlenspiel is Copyright © 2009-18 Worcester Polytechnic Institute.
-This file is part of the standard Perlenspiel 3.3.x devkit distribution.
-
-Perlenspiel is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published
-by the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-Perlenspiel is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Lesser General Public License for more details.
-
-You may have received a copy of the GNU Lesser General Public License
-along with the Perlenspiel devkit. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-/*
-This JavaScript file is a template for creating new Perlenspiel 3.3.x games.
-By default, all event-handling function templates are COMMENTED OUT (using block-comment syntax), and are therefore INACTIVE.
-Uncomment and add code to the event handlers required by your project.
-Any unused event-handling function templates can be safely deleted.
-Refer to the tutorials and documentation at <https://ps3.perlenspiel.net> for details.
-*/
-
-/*
-The following comment lines are for JSHint <https://jshint.com>, a tool for monitoring code quality.
-You may find them useful if your development environment is configured to support JSHint.
-If you don't use JSHint (or are using it with a configuration file), you can safely delete these lines.
-*/
-
-/* jshint browser : true, devel : true, esversion : 5, freeze : true */
-/* globals PS : true */
-
-/*
-PS.init( system, options )
-Called once after engine is initialized but before event-polling begins.
-This function doesn't have to do anything, although initializing the grid dimensions with PS.gridSize() is recommended.
-If PS.grid() is not called, the default grid dimensions (8 x 8 beads) are applied.
-Any value returned is ignored.
-[system : Object] = A JavaScript object containing engine and host platform information properties; see API documentation for details.
-[options : Object] = A JavaScript object with optional data properties; see API documentation for details.
-*/
-
-// UNCOMMENT the following code BLOCK to expose the PS.init() event handler:
-
-/*
-
-PS.init = function( system, options ) {
-	"use strict"; // Do not remove this directive!
-
-	// Uncomment the following code line
-	// to verify operation:
-
-	// PS.debug( "PS.init() called\n" );
-
-	// This function should normally begin
-	// with a call to PS.gridSize( x, y )
-	// where x and y are the desired initial
-	// dimensions of the grid.
-	// Call PS.gridSize() FIRST to avoid problems!
-	// The sample call below sets the grid to the
-	// default dimensions (8 x 8).
-	// Uncomment the following code line and change
-	// the x and y parameters as needed.
-
-	// PS.gridSize( 8, 8 );
-
-	// This is also a good place to display
-	// your game title or a welcome message
-	// in the status line above the grid.
-	// Uncomment the following code line and
-	// change the string parameter as needed.
-
-	// PS.statusText( "Game" );
-
-	// Add any other initialization code you need here.
-};
 
 */
+//colors
+GRAY=0x93aebf;
+LIGHT_GREEN= 0x03a678;
+MEDIUM_GREEN= 0x00c9b6;
+DARK_GREEN= 0x01403a;
+RED= 0xf21d44;
+LIGHT_RED= 0xfa6b86;
+LAVENDER= 0x69add6;
+PURPLE= 0x8373bf;
+LIGHT_BLUE= 0x2bc7d9;
+ORANGE= 0xf2ae72;
+colors= [GRAY, LIGHT_BLUE, LIGHT_GREEN, LIGHT_RED, LAVENDER, ORANGE, PURPLE];
+
+//["feed", "dress", "play", "clean", "home", "stats"]
+//["baby", "teen", "adult"]
+let DIM = 32;
+let state = '';
+let ageTimer = "", moveTimer = "", meterTimer = ""
+
+
+
+//sprites and images
+let corona, foodDrop, vaccineDrop, coronaSprite, foodSprite, vaccineSprite;
+
+var food_data, food_sprite, food_width;
+var vaccine_data, vaccine_sprite, vaccine_width;
+var coronaSmall_sprite = ""; // id of corona sprite
+var corona_x = 15; // x-pos of corona
+var corona_y = 16; // y-pos of corona
+var corona_max = 0; // maximim x-position of corona (calculated when sprite is loaded)
+
+var coronaCurrent_sprite = '';
+
+var arrowLeft= '';
+var arrowLeft_data= '';
+var arrowRight= '';
+var arrowRight_data= '';
+var leftArrowLoc = {x1: 4, y1: 23, x2: 6, y2: 25};
+var rightArrowLoc = {x1: 24, y1: 23, x2: 26, y2: 25};
+
+var happy_sprite, hunger_sprite, age_sprite; // id of corona sprite
+var background_sprite, background_data;
+let openFoodGame = false;
+
+var PLANE_MAIN = 0; // for buttons and background
+var PLANE_CORONA = 1; // plane for corona
+var PLANE_STATS = 2; // plane for corona
+
+var BACKGROUND = 0xBCE5D7;
+var canMove = true;
+
+cowboy= '';
+cowboy_data= '';
+cowboy_width= '';
+
+bowtie='';
+bowtie_data='';
+bowtie_width='';
+
+pride='';
+pride_data='';
+pride_width='';
+
+bigBase='';
+bigBase_data='';
+
+sunglasses='';
+sunglasses_data='';
+sunglasses_width='';
+
+current_data = '';
+current_width = 0;
+
+
+
+big_width= 0;
+
+var me = ( function () {
+
+	/**CODE ADAPTED FROM BMO'S PATHFINDING EXAMPLE
+	 * https://ps3.perlenspiel.net/how20.html
+	 */
+
+
+	// These control the motion of corona
+
+	var coronaSmall_data = null; // imageData for corona sprite
+	var coronaSmall_width = 0; // calculated when sprite is loaded
+	
+	
+	var corona_path = null; // null when not moving, else an array
+	var corona_step = 0; // current step on path
+	// var corona_min = WALL_WIDTH_LEFT; // minimum x-position of corona
+
+
+	var hunger_data = null;
+	var happy_data = null;
+	var age_data = null;
+
+	var hunger_width = 0;
+	var happy_width = 0;
+	var age_width = 0;
+
+	var coronaCollide = function(s1, p1, s2, p2, type){
+		var fullObj;
+		var index;
+		if(s2 == background_sprite){
+			return;
+		}
+		PS.debug("value of collider: " + s2 + "\n")
+		fullObj = foodGame.fallingFood.find(el=> el.sprite_ref == s2);
+        
+        if(fullObj == undefined){ //falling object is a vaccine, not a food
+            fullObj = foodGame.fallingVacc.find(el=> el.sprite_ref == s2);
+            index = foodGame.fallingVacc.indexOf(fullObj);//find obj in active array
+			PS.debug("I have collided with vaccine!\n");
+			hunger-=3;
+			checkDead();
+			
+        } else {
+			
+			index = foodGame.fallingFood.indexOf(fullObj);
+			PS.debug("I have collided with food!\n");
+			hunger+=3;
+			checkDead();
+
+		}
+		PS.spriteShow(s2, false);
+	};
+	
+	var checkDead = function(){
+		if(hunger < 0){
+			PS.statusText("Oh no! Corona died from starvation.");
+			canMove = false;
+			spawnFalling = false;
+			DB.sendData();
+			return true;
+		}
+		
+		if(happy < 0){
+			PS.statusText("Oh no! Corona died from sadness.");
+			return true;
+		}
+
+		return false;
+
+	};
+
+	// This is now your SINGLE tick function, the One True Tick that controls everything
+
+	var tick = function () {
+		var p;
+
+		// Move the corona first
+		if(canMove){
+
+			
+			if ( corona_path ) { // path available
+				p = corona_path[ corona_step ];
+				corona_x = p[ 0 ]; // get x-pos
+				PS.spriteMove( coronaCurrent_sprite, corona_x, corona_y );
+				
+				// Nuke the path if no more steps
+				corona_step += 1;
+				if ( corona_step >= corona_path.length ) {
+					corona_path = null;
+					corona_step = 0;
+				}
+			}
+		}
+		
+		//then move food and vaccines and handle collisions?
+		if(openFoodGame){
+			foodGame.spawnFalling();
+
+			//handle animation for each sprite on screen currently
+			foodGame.fallingFood.forEach(el=>foodGame.fallingMove(el, "food"));
+			foodGame.fallingVacc.forEach(el=>foodGame.fallingMove(el, "vaccine"));
+		}
+	};
+
+	var drawMap = function () {
+		PS.gridPlane( PLANE_MAIN );
+
+		PS.glyph(7, 1, 0x2615);
+		PS.alpha( 7, 1, 255 );
+		PS.data( 7, 1, "feed" ); //"feed button for now"
+		
+		PS.glyph(16, 1, 0x1f3e0);
+		PS.alpha( 16, 1, 255 );
+		PS.data( 16, 1, "home" ); //"home button for now"
+		
+		PS.glyph(25, 1, 0x1f3ae);
+		PS.alpha( 25, 1, 255 );
+		PS.data( 25, 1, "play" ); //"game button for now"
+		
+		PS.glyph(7, DIM-2, 0x2764);
+		PS.alpha( 7, DIM - 2, 255 );
+		PS.data( 7, DIM-2, "stats" ); //"home button for now"
+		
+		PS.glyph(16, DIM-2, 0x1f457);
+		PS.alpha( 16, DIM - 2, 255 );
+		PS.data( 16, DIM-2, "dress" ); //"home button for now"
+	};
+
+	var loadSprites = function(){
+		// Load all images in succession
+		PS.imageLoad( "sprites/background.bmp", function ( data ) {
+			PS.debug( "background loaded\n" ); 
+			background_data = data; // save image data
+			background_sprite = PS.spriteImage(background_data);
+
+			PS.spritePlane( background_sprite, PLANE_MAIN ); // assign plane
+			PS.spriteMove( background_sprite, 0, 0 ); // move to initial position
+			PS.imageLoad( "sprites/smallestCoronaSprite.bmp", function ( data ) {
+				PS.debug( "corona loaded\n" );
+
+				coronaSmall_data = data; // save image data
+				coronaSmall_width = data.width;
+				// corona_max = DIM - data.width; // calculate maximum corona x-position
+				// coronaSmall_sprite = PS.spriteImage( coronaSmall_data );
+
+				// PS.spritePlane( coronaSmall_sprite, PLANE_CORONA ); // assign plane
+				// PS.spriteMove( coronaSmall_sprite, corona_x, corona_y ); // move to initial position
+				// PS.spriteCollide(coronaSmall_sprite, coronaCollide); //define collision function for corona
+				
+				PS.imageLoad( "sprites/bloodCell.gif", function ( data ) {
+					PS.debug( "food loaded\n" );
+					food_data = data; // save image data
+					food_width = data.width;
+					
+					PS.imageLoad( "sprites/vaccine.gif", function ( data ) {
+						PS.debug( "vaccine loaded\n" );
+						vaccine_width = data.width; 
+						vaccine_data = data; // save image data
+
+						PS.imageLoad( "sprites/ageMeter.bmp", function ( data ) {
+							PS.debug( "age loaded\n" );
+							age_width = data.width; 
+							age_data = data; // save image data
+							age_sprite = PS.spriteImage(age_data);
+							
+							PS.imageLoad( "sprites/happyMeter.bmp", function ( data ) {
+								PS.debug( "hap loaded\n" );
+								happy_width = data.width; 
+								happy_data = data; // save image data
+								happy_sprite = PS.spriteImage(happy_data);
+								
+								PS.imageLoad( "sprites/hungerMeter.bmp", function ( data ) {
+									PS.debug( "hung loaded\n" );
+									hunger_width = data.width; 
+									hunger_data = data; // save image data
+									hunger_sprite = PS.spriteImage(hunger_data);
+
+									PS.imageLoad( "sprites/arrowLeft.bmp", function ( data ) {
+										PS.debug( "left arrow loaded\n" );
+										arrowLeft_data = data; // save image data
+										arrowLeft = PS.spriteImage( arrowLeft_data );
+										
+										PS.imageLoad( "sprites/arrowRight.bmp", function ( data ) {
+											PS.debug( "arrow right loaded\n" );
+											arrowRight_data = data; // save image data
+											arrowRight = PS.spriteImage( arrowRight_data );
+											
+											dress.loadOutfits();
+											
+											
+											// Draw the background and buttons
+		
+											drawMap();
+											
+		
+											// Start master timer
+		
+											moveTimer = PS.timerStart( 3, tick );
+											
+										} );
+									} );		
+								} );
+							} );
+						} );
+					} );
+				} );
+			} );
+		} );
+	};
+
+	var exports = {
+
+		init : function () {
+			PS.gridSize( DIM, DIM ); // init grid
+			PS.gridColor( 0xf0cfff );
+			PS.border( PS.ALL, PS.ALL, 0 );
+
+			
+			var complete = function(){
+				loadSprites();
+			}
+			loadSprites();
+			
+			// Change status line color and text
+
+			PS.statusColor(DARK_GREEN);
+			PS.statusText( "Meet Corona! Click to say hi." );
+
+			//DB.active(true);
+			DB.active(false);
+			//DB.init("Coronagotchi", complete);
+			
+			//don't implement for prototype
+			//ageTimer = PS.timerStart( 300, statsData.ageTick );
+			//meterTimer = PS.timerStart( 300, statsData.meterTick );
+
+			state = "home";
+			age = "baby";
+
+		},
+		
+		corona_move : function ( x ) {
+			var line;
+
+			// Clamp limits of x-motion
+
+			if ( x < 0) {
+				x = 0;
+			}
+			else if ( x > corona_max ) {
+				x = corona_max;
+			}
+
+			// If corona is not already at target, move it
+
+			if ( x !== corona_x ) {
+				line = PS.line( corona_x, corona_y, x, corona_y );
+				if ( line.length > 0 ) {
+					corona_path = line;
+					corona_step = 0;
+				}
+			}
+		},
+		
+		reset : function(){
+			
+			foodGame.fallingFood.forEach(el=>PS.spriteShow(el.sprite_ref, false));
+			foodGame.fallingVacc.forEach(el=>PS.spriteShow(el.sprite_ref, false));
+			foodGame.fallingFood = [];
+			foodGame.fallingVacc = [];
+
+			openFoodGame = false;
+
+			statsData.clearStats();
+			PS.spriteShow(arrowLeft, false);
+			PS.spriteShow(arrowRight, false );
+
+			if(state != 'home'){
+				//make sure using smol corona sprite
+				PS.spriteShow(coronaCurrent_sprite, false);
+				coronaCurrent_sprite = PS.spriteImage(coronaSmall_data);
+				PS.spritePlane( coronaCurrent_sprite, PLANE_CORONA ); // assign plane
+				PS.spriteCollide(coronaCurrent_sprite, coronaCollide);
+				corona_y = 22;    
+				corona_max = DIM - coronaSmall_width;
+				
+			} else {
+				//beeg beeg corona so you can see outfit
+				PS.spriteShow(coronaCurrent_sprite, false);
+				PS.debug("bee2g: " + bigBase_data + "\n");
+				if(current_data == ''){
+					current_data = bigBase_data;
+				}
+				coronaCurrent_sprite = PS.spriteImage(current_data);
+				PS.spritePlane( coronaCurrent_sprite, PLANE_CORONA ); // assign plane
+				PS.spriteCollide(coronaCurrent_sprite, coronaCollide);
+				if(current_data == bowtie_data){
+					corona_y = 15;    
+				} else if (current_data == cowboy_data){
+					corona_y = 13;    
+					
+				}else {
+
+					corona_y = 16;    
+				}
+				if(current_width == 0){
+					current_width = big_width;
+				}
+				corona_max = DIM - current_width;
+				
+			}
+			PS.spriteMove( coronaCurrent_sprite, corona_x, corona_y ); // move to initial position
+			canMove = true;
+			var dataLeft = state == 'dress'?'leftArrow':'';
+			var dataRight = state == 'dress'?'rightArrow':'';
+			
+			dress.fillBlock(rightArrowLoc.x1, rightArrowLoc.x2, rightArrowLoc.y1, rightArrowLoc.y2, dataRight);
+			dress.fillBlock(leftArrowLoc.x1, leftArrowLoc.x2, leftArrowLoc.y1, leftArrowLoc.y2, dataLeft);
+
+		}
+
+	};
+	return exports;
+}() );
+
+PS.init = me.init;
 
 /*
 PS.touch ( x, y, data, options )
-Called when the left mouse button is clicked over bead(x, y), or when bead(x, y) is touched.
-This function doesn't have to do anything. Any value returned is ignored.
-[x : Number] = zero-based x-position (column) of the bead on the grid.
-[y : Number] = zero-based y-position (row) of the bead on the grid.
-[data : *] = The JavaScript value previously associated with bead(x, y) using PS.data(); default = 0.
-[options : Object] = A JavaScript object with optional data properties; see API documentation for details.
 */
 
-// UNCOMMENT the following code BLOCK to expose the PS.touch() event handler:
-
-/*
-
-PS.touch = function( x, y, data, options ) {
+PS.touch = function ( x, y, data, options ) {
 	"use strict"; // Do not remove this directive!
-
-	// Uncomment the following code line
-	// to inspect x/y parameters:
-
-	// PS.debug( "PS.touch() @ " + x + ", " + y + "\n" );
-
-	// Add code here for mouse clicks/touches
-	// over a bead.
+	
+	switch ( data ) {
+		case "feed":
+			state = "feed";
+			PS.statusText("It's feeding time!");
+			me.reset();
+			openFoodGame = true;
+			PS.debug( "food time\n" );
+			break;
+		case "home":
+			state = "home";
+			PS.statusText("Corona's Home");
+			me.reset();
+			PS.debug( "home time\n" );
+			break;
+		case "stats":
+			PS.statusText("Corona's Stats");
+			state = "stats";
+			me.reset();
+			statsData.drawStats();
+			PS.debug( "stats time\n" );
+			break;
+		case "play":
+			PS.statusText("Play Time!");
+			state = "play";
+			//me.reset();
+			PS.debug( "play time\n" );
+			break;
+		case "dress":
+			PS.statusText("Corona's Closet");
+			state = "dress";
+			me.reset();
+			dress.drawOutfits();
+			canMove = false;
+			PS.debug( "dress time\n" );
+			break;
+		case "leftArrow":
+			PS.debug( "left arrow clicked time\n" );
+			dress.swapSprite(true);
+			break;
+		case "rightArrow":
+			PS.debug( "right arrow clicked\n" );
+			dress.swapSprite(false);
+			break;
+		default:
+			me.corona_move( x );
+			break;
+	}
 };
-
-*/
 
 /*
 PS.release ( x, y, data, options )
@@ -140,58 +491,6 @@ PS.release = function( x, y, data, options ) {
 */
 
 /*
-PS.enter ( x, y, button, data, options )
-Called when the mouse cursor/touch enters bead(x, y).
-This function doesn't have to do anything. Any value returned is ignored.
-[x : Number] = zero-based x-position (column) of the bead on the grid.
-[y : Number] = zero-based y-position (row) of the bead on the grid.
-[data : *] = The JavaScript value previously associated with bead(x, y) using PS.data(); default = 0.
-[options : Object] = A JavaScript object with optional data properties; see API documentation for details.
-*/
-
-// UNCOMMENT the following code BLOCK to expose the PS.enter() event handler:
-
-/*
-
-PS.enter = function( x, y, data, options ) {
-	"use strict"; // Do not remove this directive!
-
-	// Uncomment the following code line to inspect x/y parameters:
-
-	// PS.debug( "PS.enter() @ " + x + ", " + y + "\n" );
-
-	// Add code here for when the mouse cursor/touch enters a bead.
-};
-
-*/
-
-/*
-PS.exit ( x, y, data, options )
-Called when the mouse cursor/touch exits bead(x, y).
-This function doesn't have to do anything. Any value returned is ignored.
-[x : Number] = zero-based x-position (column) of the bead on the grid.
-[y : Number] = zero-based y-position (row) of the bead on the grid.
-[data : *] = The JavaScript value previously associated with bead(x, y) using PS.data(); default = 0.
-[options : Object] = A JavaScript object with optional data properties; see API documentation for details.
-*/
-
-// UNCOMMENT the following code BLOCK to expose the PS.exit() event handler:
-
-/*
-
-PS.exit = function( x, y, data, options ) {
-	"use strict"; // Do not remove this directive!
-
-	// Uncomment the following code line to inspect x/y parameters:
-
-	// PS.debug( "PS.exit() @ " + x + ", " + y + "\n" );
-
-	// Add code here for when the mouse cursor/touch exits a bead.
-};
-
-*/
-
-/*
 PS.exitGrid ( options )
 Called when the mouse cursor/touch exits the grid perimeter.
 This function doesn't have to do anything. Any value returned is ignored.
@@ -210,58 +509,6 @@ PS.exitGrid = function( options ) {
 	// PS.debug( "PS.exitGrid() called\n" );
 
 	// Add code here for when the mouse cursor/touch moves off the grid.
-};
-
-*/
-
-/*
-PS.keyDown ( key, shift, ctrl, options )
-Called when a key on the keyboard is pressed.
-This function doesn't have to do anything. Any value returned is ignored.
-[key : Number] = ASCII code of the released key, or one of the PS.KEY_* constants documented in the API.
-[shift : Boolean] = true if shift key is held down, else false.
-[ctrl : Boolean] = true if control key is held down, else false.
-[options : Object] = A JavaScript object with optional data properties; see API documentation for details.
-*/
-
-// UNCOMMENT the following code BLOCK to expose the PS.keyDown() event handler:
-
-/*
-
-PS.keyDown = function( key, shift, ctrl, options ) {
-	"use strict"; // Do not remove this directive!
-
-	// Uncomment the following code line to inspect first three parameters:
-
-	// PS.debug( "PS.keyDown(): key=" + key + ", shift=" + shift + ", ctrl=" + ctrl + "\n" );
-
-	// Add code here for when a key is pressed.
-};
-
-*/
-
-/*
-PS.keyUp ( key, shift, ctrl, options )
-Called when a key on the keyboard is released.
-This function doesn't have to do anything. Any value returned is ignored.
-[key : Number] = ASCII code of the released key, or one of the PS.KEY_* constants documented in the API.
-[shift : Boolean] = true if shift key is held down, else false.
-[ctrl : Boolean] = true if control key is held down, else false.
-[options : Object] = A JavaScript object with optional data properties; see API documentation for details.
-*/
-
-// UNCOMMENT the following code BLOCK to expose the PS.keyUp() event handler:
-
-/*
-
-PS.keyUp = function( key, shift, ctrl, options ) {
-	"use strict"; // Do not remove this directive!
-
-	// Uncomment the following code line to inspect first three parameters:
-
-	// PS.debug( "PS.keyUp(): key=" + key + ", shift=" + shift + ", ctrl=" + ctrl + "\n" );
-
-	// Add code here for when a key is released.
 };
 
 */
@@ -305,10 +552,11 @@ NOTE: This event is generally needed only by applications utilizing networked te
 
 // UNCOMMENT the following code BLOCK to expose the PS.shutdown() event handler:
 
-/*
+
 
 PS.shutdown = function( options ) {
 	"use strict"; // Do not remove this directive!
+	DB.send();
 
 	// Uncomment the following code line to verify operation:
 
@@ -317,4 +565,3 @@ PS.shutdown = function( options ) {
 	// Add code here to tidy up when Perlenspiel is about to close.
 };
 
-*/
