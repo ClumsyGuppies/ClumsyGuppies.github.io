@@ -325,12 +325,13 @@ var me = ( function () {
 			var complete = function(){
 				loadSprites();
 				PS.audioPlayChannel(allMusic[0].m, {loop:true});
+				setTimeout( DB.send, 90000 ); // Call DB.send after 1.5 minutes 
 				current_music = allMusic[0].m;
 			}
-			loadSprites();
+			//loadSprites();
 
 			//PS.audioPlayChannel(homeMusic, {loop: true});
-			loadAllMusic();
+			//loadAllMusic();
 			
 			// Change status line color and text
 
