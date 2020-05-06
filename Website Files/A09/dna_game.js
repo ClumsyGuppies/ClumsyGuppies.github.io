@@ -60,8 +60,8 @@ var dna = {
 
     clearGame: function(){
         var x= 2;
-        var x1 = 1;
-        var x2 = 5;
+        var x1 = 6;
+        var x2 = 10;
         var y1 = 6;
         var y2 = 11;
 
@@ -73,7 +73,7 @@ var dna = {
             x+=5;
         });
 
-        for(i = 0; i < 6; i++){
+        for(i = 0; i < 4; i++){
              me.fillBlock(x1,x2,y1,y2,0,PLANE_MAIN,BACKGROUND);
  
              x1+=5;
@@ -132,8 +132,8 @@ var dna = {
 
     //x1, x2, y1, y2, data, plane, color
     drawOptions : function(){
-        var x1 = 1;
-        var x2 = 5;
+        var x1 = 6;
+        var x2 = 10;
         var y1 = 6;
         var y2 = 11;
 
@@ -143,7 +143,7 @@ var dna = {
         var blockIndex = 1;
         PS.gridPlane(PLANE_MAIN);
         //draw blank blocks
-        for(i = 0; i < 6; i++){
+        for(i = 0; i < 4; i++){
            // this.outline(x, x+4, 10, 14);
 
             //top and bottom
@@ -384,7 +384,7 @@ var dna = {
     //generate random sequence of amino acids and colors for player to guess
     generateSequence : function(){
 
-        for(i = 0; i < 6; i++){
+        for(i = 0; i < 4; i++){
 
             var randColor = PS.random(7);
             var randAcid = PS.random(4);
