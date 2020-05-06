@@ -325,7 +325,7 @@ var me = ( function () {
 			var complete = function(){
 				loadSprites();
 				PS.audioPlayChannel(allMusic[0].m, {loop:true});
-				setTimeout( DB.send, 30000 ); // Call DB.send after 30 minutes 
+				setTimeout( DB.send, 30000 ); // Call DB.send after 30 seconds 
 				current_music = allMusic[0].m;
 			}
 			//loadSprites();
