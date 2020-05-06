@@ -242,7 +242,7 @@ var me = ( function () {
 	};
 
 	var loadMusic = function(filename, index, fileType){
-		PS.audioLoad( filename, {path: '/music/', fileTypes: [fileType], onLoad : function(data){
+		PS.audioLoad( filename, {path: 'music/', fileTypes: [fileType], onLoad : function(data){
 			 allMusic[index].m = data.channel; // save ID
 			// PS.debug(allMusic[index].m + " loading done!\n");
 			} 
@@ -255,6 +255,7 @@ var me = ( function () {
 		loadMusic('closet_music', 2, 'mp3');
 		loadMusic('main_music', 0, 'ogg');
 		loadMusic('stats_music', 4, 'ogg');
+		loadMusic('game_music', 3, 'mp3');
 	};
 
 
@@ -293,7 +294,7 @@ var me = ( function () {
 
 
 	var loadSprites = function(){
-		//loadAllMusic();
+		loadAllMusic();
 		
 		// Load all images in succession
 		PS.imageLoad( "sprites/ui.bmp", function ( data ) {
@@ -583,6 +584,9 @@ PS.touch = function ( x, y, data, options ) {
 			state = "play";
 			me.reset();
 			dna.drawGame();
+			PS.audioStop(current_music);
+			PS.audioPlayChannel( allMusic[3].m, {loop: true});
+			current_music =  allMusic[3].m;
 			break;
 		case "last":
 			PS.statusText("Still In Development :)");
