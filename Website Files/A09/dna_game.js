@@ -20,7 +20,7 @@ question_data = '';
 questionMark = '';
 
 
-colors= [LIGHT_BLUE, LIGHT_GREEN, LIGHT_RED, LAVENDER, ORANGE, PURPLE, RED, MEDIUM_GREEN];
+colors= [LIGHT_BLUE, LIGHT_GREEN, LIGHT_RED, ORANGE, PURPLE, RED];
 aminos= [];
 sqIndex = 0;
 numTries = 0; //at 3 lose happiness and quit game
@@ -65,7 +65,7 @@ var dna = {
         var y1 = 6;
         var y2 = 11;
 
-        var cx = 8;
+        var cx = 10;
         var lx = 7;
         answerSequence.forEach(function(e){
 
@@ -137,7 +137,7 @@ var dna = {
         var y1 = 6;
         var y2 = 11;
 
-        var cx = 8;
+        var cx = 10;
         var lx = 7;
 
         var blockIndex = 1;
@@ -386,7 +386,7 @@ var dna = {
 
         for(i = 0; i < 4; i++){
 
-            var randColor = PS.random(7);
+            var randColor = PS.random(5);
             var randAcid = PS.random(4);
     
             var rc = this.pickRand(randColor, 'color');
@@ -409,11 +409,11 @@ var dna = {
         var rc = {
             1: LIGHT_RED,//pinkTile,
             2: LIGHT_BLUE,//blueTile,//
-            3: MEDIUM_GREEN,//greenTile,//
-            4: ORANGE,//orangeTile
-            5: PURPLE,//purpleTile
-            6: LAVENDER,//yellowTile,//
-            7: RED,//redTile,
+            //3: MEDIUM_GREEN,//greenTile,//
+            3: ORANGE,//orangeTile
+            4: PURPLE,//purpleTile
+           // 6: LAVENDER,//yellowTile,//
+            5: RED,//redTile,
         }
         var ra = {
             1: 'A',
