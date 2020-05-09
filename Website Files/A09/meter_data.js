@@ -152,18 +152,18 @@ var statsData = {
         
         if(hunger < 0){
             PS.statusText("Oh no, Corona died of starvation!");
-            DB.send();
+            // DB.send();
         }else if(hunger >= 21){
             PS.statusText("Corona is full!");
-            DB.send();
+            // DB.send();
         }
         if(happy < 0){
             PS.statusText("Oh no, Corona died of sadness :(");
-            DB.send();
+            // DB.send();
         }
         if(happy >= 21){
             PS.statusText("Corona is at max happines :)");
-            DB.send();
+            // DB.send();
         }
     }
 

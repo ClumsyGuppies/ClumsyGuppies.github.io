@@ -144,7 +144,7 @@ var me = ( function () {
 			PS.statusText("Oh no! Corona died from starvation.");
 			canMove = false;
 			spawnFalling = false;
-			DB.sendData();
+			// DB.sendData();
 			return true;
 		}
 		
@@ -322,25 +322,25 @@ var me = ( function () {
 			PS.border( PS.ALL, PS.ALL, 0 );
 
 			
-			var complete = function(){
-				loadSprites();
-				PS.audioPlayChannel(allMusic[0].m, {loop:true});
-				setTimeout( DB.send, 30000 ); // Call DB.send after 30 seconds 
-				current_music = allMusic[0].m;
-			}
-			//loadSprites();
+			// var complete = function(){
+			// 	loadSprites();
+			// 	PS.audioPlayChannel(allMusic[0].m, {loop:true});
+			// 	setTimeout( DB.send, 30000 ); // Call DB.send after 30 seconds 
+			// 	current_music = allMusic[0].m;
+			// }
+			loadSprites();
 
 			//PS.audioPlayChannel(homeMusic, {loop: true});
-			//loadAllMusic();
+			loadAllMusic();
 			
 			// Change status line color and text
 
 			PS.statusColor(DARK_GREEN);
 			PS.statusText( "Meet Corona! Click to say hi." );
 
-			DB.active(true);
+			//DB.active(true);
 			//DB.active(false);
-			DB.init("Coronagotchi", complete);
+			//DB.init("Coronagotchi", complete);
 			//PS.audioPlayChannel(allMusic[0].m, {loop:true});
 			//current_music = allMusic[0].m;
 			//don't implement for prototype
@@ -604,7 +604,7 @@ NOTE: This event is generally needed only by applications utilizing networked te
 
 PS.shutdown = function( options ) {
 	"use strict"; // Do not remove this directive!
-	DB.send();
+	// DB.send();
 
 	// Uncomment the following code line to verify operation:
 

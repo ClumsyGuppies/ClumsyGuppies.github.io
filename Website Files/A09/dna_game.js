@@ -263,7 +263,7 @@ var dna = {
                     me.notify(2);
                     resetTimer = PS.timerStart(90, this.waitAndReset);
                     isResetTimerDone = false;
-                    DB.send();
+                    // DB.send();
 
                 }
 
@@ -274,7 +274,7 @@ var dna = {
         isRight = true;
         isResultTimerDone = false;
         resultTimer = PS.timerStart(50, this.flashResult);
-        DB.send();
+        // DB.send();
         //increase happiness and clear screen here
         // PS.debug("happy value befiore= " + happy + '\n');
         statsData.changeStat('happy', 3);
