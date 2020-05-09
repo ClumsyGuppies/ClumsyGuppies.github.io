@@ -203,11 +203,11 @@ var dna = {
             if(selectedAcid != ''){
                 var ts = PS.spriteImage(selectedAcid);
                 PS.spritePlane(ts, PLANE_STATS);
+                me.fillBlock(data.xs,data.xe,data.ys,data.ye,temp,PLANE_MAIN,selectedColor);
+                PS.spriteMove(ts, data.xs+1, data.ys+1); 
+                activeSprites.push(ts);
+                playerSequence[data.index - 1] = {color:selectedColor, acid:selectedAcid};
             }
-            me.fillBlock(data.xs,data.xe,data.ys,data.ye,temp,PLANE_MAIN,selectedColor);
-            PS.spriteMove(ts, data.xs+1, data.ys+1); 
-            activeSprites.push(ts);
-            playerSequence[data.index - 1] = {color:selectedColor, acid:selectedAcid};
             //none of player sequence undefined
 
             if(this.checkPlayerSequenceDefined()){
@@ -263,7 +263,7 @@ var dna = {
                     me.notify(2);
                     resetTimer = PS.timerStart(90, this.waitAndReset);
                     isResetTimerDone = false;
-                    // DB.send();
+                    DB.send();
 
                 }
 
@@ -274,7 +274,7 @@ var dna = {
         isRight = true;
         isResultTimerDone = false;
         resultTimer = PS.timerStart(50, this.flashResult);
-        // DB.send();
+        DB.send();
         //increase happiness and clear screen here
         // PS.debug("happy value befiore= " + happy + '\n');
         statsData.changeStat('happy', 3);
