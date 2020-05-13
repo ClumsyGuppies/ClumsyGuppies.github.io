@@ -200,7 +200,7 @@ var statsData = {
             PS.statusText("Oh no, Corona died of starvation!");
             this.showDeathScreen();
             deathTimer = PS.timerStart(200, this.startOver);
-        }else if(hunger >= 21){
+        }else if(hunger >= 21 && stat == 'hunger'){
             PS.statusText("Corona is full!");
         }
         if(happy < 0){
@@ -208,7 +208,7 @@ var statsData = {
             this.showDeathScreen();
             deathTimer = PS.timerStart(200, this.startOver);
         }
-        if(happy >= 21){
+        if(happy >= 21 && stat == 'happy'){
             PS.statusText("Corona is at max happines :)");
             
         }
@@ -353,7 +353,12 @@ var statsData = {
             corona_max = DIM - current_width;
         }
        // prevStatus = PS.statusText();
-        PS.statusText("Corona has aged!");
+        if(age == 21){
+           //don't
+        } else {
+
+            PS.statusText("Corona has aged!");
+        }
         PS.statusColor(LIGHT_BLUE);
         // PS.gridShadow(true, LIGHT_BLUE);
         // statsData.shadowOn = true;
@@ -421,9 +426,13 @@ var statsData = {
     showPlayerDeathScreen: function(){
         me.reset();
         PS.debug("death screen called \n");
+        PS.spriteShow(coronaCurrent_sprite, false);
         playerDeathSprite = PS.spriteImage(playerDeath_data);
         PS.spritePlane(playerDeathSprite, PLANE_STATS);
         PS.spriteMove(playerDeathSprite, 0, 0);
+
+        PS.audioPlay('fx_wilhelm');
+        PS.timerStop(ageTimer);
         
     }
 

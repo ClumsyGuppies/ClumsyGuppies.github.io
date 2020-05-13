@@ -46,6 +46,8 @@ isSqTimerDone = true;
 currentResult = '';
 isRight = false;
 
+resultShown = false;
+
 //keep track of player selected acid + color
 selectedColor = PS.CURRENT;
 selectedAcid = '';
@@ -329,15 +331,30 @@ var dna = {
     flashResult: function(){
         PS.debug("flash result!\n");
         isResultTimerDone = true;
-        if(currentResult != ''){
-            PS.debug("reset result!\n");
-            PS.spriteShow(currentResult, false);
+        if(dna.resultShown){ //already showed result, stop timer and show nothing else
+            PS.debug('result ahs alreayd been shown stop \n');
+            if(currentResult != ''){
+                PS.debug("reset result!\n");
+                PS.spriteShow(currentResult, false);
+                
+                currentResult = '';
+                PS.statusText("Memorize That Mutation!");
+                dna.resultShown = false;
+                PS.timerStop(resultTimer);
+                return;
+            }
             PS.timerStop(resultTimer);
-            
-            currentResult = '';
-            PS.statusText("Memorize That Mutation!");
-            return;
         }
+        dna.resultShown = true;
+        // if(currentResult != ''){
+        //     PS.debug("reset result!\n");
+        //     PS.spriteShow(currentResult, false);
+        //     PS.timerStop(resultTimer);
+            
+        //     currentResult = '';
+        //     PS.statusText("Memorize That Mutation!");
+        //     return;
+        // }
         if(isRight){
             PS.debug("right result!\n");
             currentResult = PS.spriteImage(correct_data);
