@@ -291,7 +291,7 @@ var dna = {
                     notifType = 2;
                     
                    // me.notify(2);
-                    resetTimer = PS.timerStart(300, this.waitAndReset); //longer to accomodate slower PCs
+                    resetTimer = PS.timerStart(120, this.waitAndReset); //longer to accomodate slower PCs
                     isResetTimerDone = false;
                     me.publicFillData(0, DIM-1, 5, DIM-5, -1);
 
@@ -310,7 +310,7 @@ var dna = {
         statsData.changeStat('happy', 3);
         notifType = 1;
         isResetTimerDone = false;
-        resetTimer = PS.timerStart(300, this.waitAndReset);
+        resetTimer = PS.timerStart(120, this.waitAndReset);
         //notif!
         return true;
 
