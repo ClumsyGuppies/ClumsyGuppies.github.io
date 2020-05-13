@@ -483,6 +483,11 @@ var me = ( function () {
 
 		},
 
+		//public version of fill
+		publicFillData : function(x1, x2, y1, y2, data){
+			fillData(x1, x2, y1, y2, data);
+		},
+
 		//public version of corona collision function, use when switching ages
 		setPublicCollide : function(){
 			PS.spriteCollide(coronaCurrent_sprite, coronaCollide);
