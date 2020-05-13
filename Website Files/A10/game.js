@@ -737,6 +737,7 @@ PS.touch = function ( x, y, data, options ) {
 			break;
 		case "question":
 			dna.checkAnswer();
+			answerChecked = false;
 			break;
 		default:
 			

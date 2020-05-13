@@ -119,6 +119,7 @@ var dress = {
 
         //reaction sound, random
         PS.audioPlayChannel(allSFX[randomSound].noise, {loop:false});
+        statsData.changeStat('happy', 1);
     },
 
     //draw closet page, arrows + first available outfit

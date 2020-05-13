@@ -20,6 +20,7 @@ wrong_data = '';
 question_data = '';
 questionMark = '';
 myindex= 0;
+answerChecked = false;
 
 
 colors= [LIGHT_BLUE, LIGHT_GREEN, LIGHT_RED, ORANGE, PURPLE, RED];
@@ -254,9 +255,10 @@ var dna = {
     //check if user input sequence matches the answer
     checkAnswer: function(){   
         var i; 
-       
+        // answerChecked = false;
         for(i = 0; i < answerSequence.length; i++){
             if(playerSequence[i] == undefined){
+                answerChecked = true;
                 return;
             }
             if(answerSequence[i].color == playerSequence[i].color && answerSequence[i].data == playerSequence[i].acid){
@@ -268,7 +270,7 @@ var dna = {
                 isResultTimerDone = false;
                 resultTimer = PS.timerStart(50, this.flashResult);
                 //fill in tick
-                if(xTick > DIM -1){
+                if(xTick > DIM -1){ 
                     xTick = DIM -2;
                 }
                 PS.color(xTick, 23, PS.COLOR_BLACK);
@@ -282,7 +284,7 @@ var dna = {
                     notifType = 2;
                     
                    // me.notify(2);
-                    resetTimer = PS.timerStart(300, this.waitAndReset);
+                    resetTimer = PS.timerStart(120, this.waitAndReset);
                     isResetTimerDone = false;
                     DB.send();
 
@@ -301,7 +303,7 @@ var dna = {
         statsData.changeStat('happy', 3);
         notifType = 1;
         isResetTimerDone = false;
-        resetTimer = PS.timerStart(300, this.waitAndReset);
+        resetTimer = PS.timerStart(120, this.waitAndReset);
         //notif!
         return true;
 
