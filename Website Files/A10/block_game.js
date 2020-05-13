@@ -162,8 +162,8 @@ var blockGame = {
                 if(blockGame.allCells.length <= 0){
                     statsData.changeStat('happy', 5);
                     blockGame.isWin = true;
-                    resultTimer = PS.timerStart(10, blockGame.showWin);
                     PS.audioPlayChannel(allSFX[LAUGH_NOISE].noise, {loop:false});
+                    resultTimer = PS.timerStart(10, blockGame.showWin);
                 }
             }
             return;

@@ -571,6 +571,7 @@ var me = ( function () {
 		//reset screen between games
 		reset : function(){
 			
+			PS.statusColor(DARK_GREEN);
 			//reset food game
 			foodGame.fallingFood.forEach(el=>PS.spriteShow(el.sprite_ref, false));
 			foodGame.fallingVacc.forEach(el=>PS.spriteShow(el.sprite_ref, false));

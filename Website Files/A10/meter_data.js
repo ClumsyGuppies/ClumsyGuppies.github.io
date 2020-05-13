@@ -142,24 +142,27 @@ var statsData = {
         if(hunger < 7){
             //low hunger alert
             PS.statusText("Corona's hunger meter is getting low!");
-            if(this.shadowOn){
-                this.shadowOn = false;
-                PS.timerStop(shadowTimer);
-            }
-            PS.gridShadow(true, 0xc40000);
-            this.shadowOn = true;
-            shadowTimer = PS.timerStart(120, statsData.pulseShadow);
+            notifType = 2;
+            // if(statsData.shadowOn){
+            //     statsData.shadowOn = false;
+            //     PS.timerStop(statsData.shadowTimer);
+            // }
+            // PS.gridShadow(true, 0xc40000);
+            // statsData.shadowOn = true;
+            // statsData.shadowTimer = PS.timerStart(120, statsData.pulseShadow);
         }
         if(happy < 8){
             //low happiness alert
             PS.statusText("Corona's happy meter is getting low!");
-            if(this.shadowOn){
-                this.shadowOn = false;
-                PS.timerStop(shadowTimer);
-            }
-            PS.gridShadow(true, 0xc40000);
-            this.shadowOn = true;
-            shadowTimer = PS.timerStart(120, statsData.pulseShadow);
+            notifType = 2;
+
+            // if(statsData.shadowOn){
+            //     statsData.shadowOn = false;
+            //     PS.timerStop(statsData.shadowTimer);
+            // }
+            // PS.gridShadow(true, 0xc40000);
+            // statsData.shadowOn = true;
+            // statsData.shadowTimer = PS.timerStart(120, statsData.pulseShadow);
         }
       
         //this.fillMeter("happy", false);
@@ -184,13 +187,13 @@ var statsData = {
         //check if values have maxed or minned here
 
         //change grid shadow to help notify player of a change, works with notif system
-        if(this.shadowOn){
-            this.shadowOn = false;
-            PS.timerStop(shadowTimer);
-        }
-        value < 0? PS.gridShadow(true, PS.COLOR_RED): PS.gridShadow(true, PS.COLOR_GREEN); 
-        this.shadowOn = true;
-        shadowTimer = PS.timerStart(60, this.pulseShadow);
+        // if(statsData.shadowOn){
+        //     statsData.shadowOn = false;
+        //     PS.timerStop(statsData.shadowTimer);
+        // }
+        // value < 0? PS.gridShadow(true, PS.COLOR_RED): PS.gridShadow(true, PS.COLOR_GREEN); 
+        // statsData.shadowOn = true;
+        // statsData.shadowTimer = PS.timerStart(60, this.pulseShadow);
         
         //handle death scenarios + notif of maxing
         if(hunger < 0){
@@ -312,7 +315,14 @@ var statsData = {
                 } else {
                     corona_y = 14;
                 }
-                ageTimer = PS.timerStart(360, this.increaseAndCall); //10 sec for now
+                state = "home";
+                PS.statusText("Corona has reached full age!");
+                me.reset();
+                PS.audioStop(current_music);
+                PS.audioPlayChannel( allMusic[0].m, {loop: true});
+                current_music =  allMusic[0].m;
+                PS.debug( "home time\n" );
+                ageTimer = PS.timerStart(600, this.increaseAndCall); //10 sec for now
 
                 break;
 
@@ -345,9 +355,9 @@ var statsData = {
        // prevStatus = PS.statusText();
         PS.statusText("Corona has aged!");
         PS.statusColor(LIGHT_BLUE);
-        PS.gridShadow(true, LIGHT_BLUE);
-        this.shadowOn = true;
-        shadowTimer = PS.timerStart(120, statsData.pulseShadow);
+        // PS.gridShadow(true, LIGHT_BLUE);
+        // statsData.shadowOn = true;
+        // statsData.shadowTimer = PS.timerStart(120, statsData.pulseShadow);
         PS.spriteMove( coronaCurrent_sprite, corona_x, corona_y ); 
      
     },
@@ -364,8 +374,8 @@ var statsData = {
                 age+=6;
                 break;
             case 21:
-                this.showPlayerDeathScreen();
-                deathTimer = PS.timerStart(200, this.startOver);
+                statsData.showPlayerDeathScreen();
+                //deathTimer = PS.timerStart(200, this.startOver);
                 break;
             
         }
@@ -377,12 +387,12 @@ var statsData = {
     pulseShadow : function(){
        // PS.statusText(prevStatus)
         PS.statusColor(DARK_GREEN);
-        PS.gridShadow(false, LIGHT_BLUE);
-        if(this.shadowOn == true){
+        // PS.gridShadow(false, LIGHT_BLUE);
+        // if(statsData.shadowOn == true){
 
-            PS.timerStop(shadowTimer);
-        }
-        this.shadowOn = false;
+            // PS.timerStop(statsData.shadowTimer);
+        // }
+        // statsData.shadowOn = false;
 
     },
 
@@ -390,6 +400,8 @@ var statsData = {
     showDeathScreen: function(){
         me.reset();
         PS.debug("death screen called \n");
+
+        PS.spriteShow(coronaCurrent_sprite, false);
         coronaDeathSprite = PS.spriteImage(coronaDeath_data);
         PS.spritePlane(coronaDeathSprite, PLANE_STATS);
         PS.spriteMove(coronaDeathSprite, 0, 0);
