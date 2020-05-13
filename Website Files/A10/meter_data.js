@@ -322,7 +322,7 @@ var statsData = {
                 PS.audioPlayChannel( allMusic[0].m, {loop: true});
                 current_music =  allMusic[0].m;
                 PS.debug( "home time\n" );
-                ageTimer = PS.timerStart(600, this.increaseAndCall); //10 sec for now
+                ageTimer = PS.timerStart(200, this.increaseAndCall); //10 sec for now
 
                 break;
 

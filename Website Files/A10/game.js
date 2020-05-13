@@ -10,8 +10,8 @@ Last revision: 2018-10-14 (BM)
 
 
 //music
-//home, food, closet, play, stats
-let allMusic = [{m: ''}, {m: ''}, {m: ''}, {m: ''}, {m: ''}];
+//home, food, closet, play, stats, block
+let allMusic = [{m: ''}, {m: ''}, {m: ''}, {m: ''}, {m: ''}, {m: ''}];
 var current_music = '';
 //happy, sad, hurt, confused, laugh
 var allSFX = [{noise: ''}, {noise: ''}, {noise: ''}, {noise: ''}, {noise: ''}];
@@ -321,6 +321,7 @@ var me = ( function () {
 		loadMusic('main_music', 0, 'ogg');
 		loadMusic('stats_music', 4, 'ogg');
 		loadMusic('game_music', 3, 'mp3');
+		loadMusic('block_music', 5, 'mp3');
 
 		loadAllSFX();
 	};
@@ -644,9 +645,11 @@ var me = ( function () {
 					PS.debug("is smol 2 please use\n");
 					corona_y = 17;
 					current_width = corona2_width;    
-				} else if(currentSmall_data == corona1_data || currentSmall_data == corona0_data){
-
-				} else {
+				} else if(currentSmall_data == corona1_data){
+					//nothing
+				} else if (currentSmall_data == corona0_data){
+					corona_y = 24;
+				}else {
 					corona_y = 14;
 				}
 				if(current_width == 0){
@@ -722,6 +725,9 @@ PS.touch = function ( x, y, data, options ) {
 			state = "block";
 			me.reset();
 			blockGame.drawBlockGame();
+			PS.audioStop(current_music);
+			PS.audioPlayChannel( allMusic[5].m, {loop: true});
+			current_music =  allMusic[5].m;
 			break;
 		case "dress":
 			//only allow dress up when corona is old enough (has correct size sprite)
