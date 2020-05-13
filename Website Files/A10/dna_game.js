@@ -19,7 +19,7 @@ correct_data = '';
 wrong_data = '';
 question_data = '';
 questionMark = '';
-// myindex= 0;
+myindex= 0;
 
 
 colors= [LIGHT_BLUE, LIGHT_GREEN, LIGHT_RED, ORANGE, PURPLE, RED];
@@ -279,7 +279,7 @@ var dna = {
                     notifType = 2;
                     
                    // me.notify(2);
-                    resetTimer = PS.timerStart(120, this.waitAndReset);
+                    resetTimer = PS.timerStart(300, this.waitAndReset);
                     isResetTimerDone = false;
                     DB.send();
 
@@ -298,7 +298,7 @@ var dna = {
         statsData.changeStat('happy', 3);
         notifType = 1;
         isResetTimerDone = false;
-        resetTimer = PS.timerStart(120, this.waitAndReset);
+        resetTimer = PS.timerStart(300, this.waitAndReset);
         //notif!
         return true;
 

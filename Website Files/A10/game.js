@@ -270,11 +270,13 @@ var me = ( function () {
 				//handle movement for player controller paddle during block breaker game
 				if(state == 'block' && blockGame.fullBreaker != null && blockGame.fullBreaker != []){
 					if(blockGame.fullBreaker[1] != '' && blockGame.fullBreaker[1] != null && blockGame.fullBreaker[2] != ''
-						&& blockGame.fullBreaker[2] != null)
-					PS.spriteMove( blockGame.fullBreaker[1].sprite, corona_x -3, corona_y ); //left
-					blockGame.fullBreaker[1].x = corona_x -3; //left
-					PS.spriteMove( blockGame.fullBreaker[2].sprite, corona_x +3, corona_y ); //right
-					blockGame.fullBreaker[2].x = corona_x +3; //left
+						&& blockGame.fullBreaker[2] != null){
+							PS.spriteMove( blockGame.fullBreaker[1].sprite, corona_x -3, corona_y ); //left
+							blockGame.fullBreaker[1].x = corona_x -3; //left
+							PS.spriteMove( blockGame.fullBreaker[2].sprite, corona_x +3, corona_y ); //right
+							blockGame.fullBreaker[2].x = corona_x +3; //left
+
+						}
 					
 
 				}

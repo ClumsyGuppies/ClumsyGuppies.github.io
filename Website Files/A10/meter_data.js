@@ -1,7 +1,7 @@
 //corona main metrics
 let age= 0;
 let hunger= 15; 
-let happy= 18;
+let happy= 1;
 
 //corona age sprites + data + width
 var corona0_data = '';
@@ -415,6 +415,7 @@ var statsData = {
         PS.spritePlane(coronaDeathSprite, PLANE_STATS);
         PS.spriteMove(coronaGhostSprite, 15, 10);
         PS.data(PS.ALL, PS.ALL, -1);
+        canMove = false;
     },
 
     //reload window to start new game
@@ -436,6 +437,7 @@ var statsData = {
         if(ageTimer != null && ageTimer != ''){
             PS.timerStop(ageTimer);
         }
+        canMove = false;
         
     }
 
