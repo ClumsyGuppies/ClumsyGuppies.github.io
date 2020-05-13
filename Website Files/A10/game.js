@@ -741,8 +741,8 @@ PS.touch = function ( x, y, data, options ) {
 			dress.swapSprite(false);
 			break;
 		case "question":
+		
 			dna.checkAnswer();
-			answerChecked = false;
 			break;
 		default:
 			

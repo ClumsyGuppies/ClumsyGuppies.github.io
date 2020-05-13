@@ -256,6 +256,7 @@ var dna = {
     checkAnswer: function(){   
         var i; 
         // answerChecked = false;
+        me.fillBlock(26, 30, 15, 22, '', PLANE_MAIN, PS.CURRENT);
         for(i = 0; i < answerSequence.length; i++){
             if(playerSequence[i] == undefined){
                 answerChecked = true;
@@ -328,10 +329,11 @@ var dna = {
         
         if(dna.resultShown){ //already showed result, stop timer and show nothing else
             // PS.debug("dna already shown\n");
+            // PS.debug("readd question mark\n");
+            me.fillBlock(26, 30, 15, 22, 'question', PLANE_MAIN, PS.CURRENT);
             if(currentResult != ''){
                 // PS.debug("current result is null\n");
                 PS.spriteShow(currentResult, false);
-                
                 currentResult = '';
                 PS.statusText("Memorize That Mutation!");
                 dna.resultShown = false;
