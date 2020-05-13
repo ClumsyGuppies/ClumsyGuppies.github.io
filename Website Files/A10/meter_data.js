@@ -380,8 +380,8 @@ var statsData = {
                 break;
             case 21:
                 statsData.showPlayerDeathScreen();
+                return;
                 //deathTimer = PS.timerStart(200, this.startOver);
-                break;
             
         }
         //set new aged sprite
@@ -430,9 +430,12 @@ var statsData = {
         playerDeathSprite = PS.spriteImage(playerDeath_data);
         PS.spritePlane(playerDeathSprite, PLANE_STATS);
         PS.spriteMove(playerDeathSprite, 0, 0);
+        PS.data(PS.ALL, PS.ALL, -1);
 
         PS.audioPlay('fx_wilhelm');
-        PS.timerStop(ageTimer);
+        if(ageTimer != null && ageTimer != ''){
+            PS.timerStop(ageTimer);
+        }
         
     }
 
