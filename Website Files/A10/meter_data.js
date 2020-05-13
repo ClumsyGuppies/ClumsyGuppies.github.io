@@ -1,7 +1,7 @@
 //corona main metrics
 let age= 0;
 let hunger= 15; 
-let happy= 1;
+let happy= 18;
 
 //corona age sprites + data + width
 var corona0_data = '';
