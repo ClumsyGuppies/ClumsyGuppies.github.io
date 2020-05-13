@@ -37,9 +37,9 @@ playerSequence=[];
 speed = 120; //speed sequence is flashed on screen
 
 //essential timers + info
-setupTimer = '';
-resultTimer = '';
-resetTimer = '';
+setupTimer = null;
+resultTimer = null;
+resetTimer = null;
 sqTimer = '';
 isSetupTimerDone = true;
 isResultTimerDone = true;
@@ -116,16 +116,19 @@ var dna = {
             PS.timerStop(sqTimer);
             isSqTimerDone = true;
         }
-        if(!isResultTimerDone && resultTimer != ''){
+        if(resultTimer){
             PS.timerStop(resultTimer);
             isResultTimerDone = true;
+            resultTimer = null;
         }
-        if(!isSetupTimerDone && setupTimer != ''){
+        if(setupTimer){
             PS.timerStop(setupTimer);
             isSetupTimerDone = true;
+            setupTimer = null;
         }
-        if(!isResetTimerDone && resetTimer != ''){
+        if(resetTimer){
             PS.timerStop(resetTimer);
+            resetTimer = null;
             isResetTimerDone = true;
         }
     
@@ -192,7 +195,10 @@ var dna = {
             lx+=5;
         });
         
-        PS.timerStop(setupTimer);
+        if(setupTimer){
+            PS.timerStop(setupTimer);
+            setupTimer = null;
+        }
         isSetupTimerDone = true;
     },
 
@@ -319,7 +325,9 @@ var dna = {
         PS.audioStop(current_music);
         PS.audioPlayChannel( allMusic[0].m, {loop: true});
         current_music =  allMusic[0].m;
-        PS.timerStop(resetTimer);
+        if(resetTimer){
+            PS.timerStop(resetTimer);
+        }
     },
     
     //flash correct or wrong answer result on screen for player feedback
@@ -337,28 +345,22 @@ var dna = {
                 currentResult = '';
                 PS.statusText("Memorize That Mutation!");
                 dna.resultShown = false;
-                if(!isResultTimerDone){
+                if(resultTimer){
                     PS.timerStop(resultTimer);
                     isResultTimerDone = true;
+                    resultTimer = null;
                 }
                 return;
             }
-            if(!isResultTimerDone){
+            if(resultTimer){
                 PS.timerStop(resultTimer);
                 isResultTimerDone = true;
+                resultTimer = null;
             }
         }
         // PS.debug("continue on\n");
         dna.resultShown = true;
-        // if(currentResult != ''){
-        //     PS.debug("reset result!\n");
-        //     PS.spriteShow(currentResult, false);
-        //     PS.timerStop(resultTimer);
-            
-        //     currentResult = '';
-        //     PS.statusText("Memorize That Mutation!");
-        //     return;
-        // }
+
         if(isRight){
             currentResult = PS.spriteImage(correct_data);
             PS.statusText("You've found the right DNA sequence!");
@@ -370,6 +372,15 @@ var dna = {
         PS.spriteMove(currentResult, 5, 5);
         PS.spriteShow(currentResult, true);
         
+    },
+
+    displayResult : function(){
+        if(isRight){
+            currentResult = PS.spriteImage(correct_data);
+            PS.spriteShow(currentResult, true);
+
+        }
+
     },
 
     //flash answer sequence at the begining 
