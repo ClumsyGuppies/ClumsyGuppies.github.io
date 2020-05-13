@@ -259,7 +259,7 @@ var statsData = {
 
     //change sprite + positioning based on new age of corona
     setAgeSprites: function(){
-        PS.debug("set age sprites called! " + age + "\n");
+        // PS.debug("set age sprites called! " + age + "\n");
         if(ageTimer != '' && ageTimer != null){
             PS.timerStop(ageTimer);
         }
@@ -267,7 +267,7 @@ var statsData = {
         //on each age change, start new timer until next age change
         switch(age){
             case 5:
-                PS.debug("age 1 reached\n");
+                // PS.debug("age 1 reached\n");
                 current_data = corona1_data;
                 current_width = corona1_width;
                 currentSmall_data = corona1_data;
@@ -277,7 +277,7 @@ var statsData = {
                 
                 break;
             case 10:
-                PS.debug("age 2 reached\n");
+                // PS.debug("age 2 reached\n");
                 current_data = corona2_data;
                 current_width = corona2_width;
                 currentSmall_data = coronaSmall_data;
@@ -321,7 +321,7 @@ var statsData = {
                 PS.audioStop(current_music);
                 PS.audioPlayChannel( allMusic[0].m, {loop: true});
                 current_music =  allMusic[0].m;
-                PS.debug( "home time\n" );
+                // PS.debug( "home time\n" );
                 ageTimer = PS.timerStart(200, this.increaseAndCall); //10 sec for now
 
                 break;
@@ -369,7 +369,7 @@ var statsData = {
 
     //increase age + call death screen if corona has reached max age
     increaseAndCall : function(){
-        PS.debug("calling increase and call\n");
+        // PS.debug("calling increase and call\n");
         switch(age){
             case 5:
             case 10:
@@ -404,7 +404,7 @@ var statsData = {
     //death screen for corona
     showDeathScreen: function(){
         me.reset();
-        PS.debug("death screen called \n");
+        // PS.debug("death screen called \n");
 
         PS.spriteShow(coronaCurrent_sprite, false);
         coronaDeathSprite = PS.spriteImage(coronaDeath_data);
@@ -425,7 +425,7 @@ var statsData = {
     //death screen for you
     showPlayerDeathScreen: function(){
         me.reset();
-        PS.debug("death screen called \n");
+        // PS.debug("death screen called \n");
         PS.spriteShow(coronaCurrent_sprite, false);
         playerDeathSprite = PS.spriteImage(playerDeath_data);
         PS.spritePlane(playerDeathSprite, PLANE_STATS);

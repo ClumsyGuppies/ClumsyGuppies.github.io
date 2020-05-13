@@ -55,7 +55,7 @@ var blockGame = {
             x=1;
             y+=4;
         }
-        this.allCells.forEach(e=>PS.debug("white block positinos : " + e.xpos + "\n"));
+        // this.allCells.forEach(e=>PS.debug("white block positinos : " + e.xpos + "\n"));
 
         //replace player control with little paddle board
 
@@ -90,7 +90,7 @@ var blockGame = {
 
         this.miniPath = PS.line( mx, my, nx, 5 );//create new random path and assign
         blockGame.xprev = nx;
-        PS.debug("xprev: " + blockGame.xprev + "\n");
+        // PS.debug("xprev: " + blockGame.xprev + "\n");
         
     },
 
@@ -112,16 +112,13 @@ var blockGame = {
     //load block game sprites
     loadBlocks : function(){
         PS.imageLoad( "sprites/blockBreaker/block_breaker.gif", function ( data ) {
-            PS.debug( "g loaded\n" );
             blockBreaker_data = data; // save image data
             blockBreaker_width = data.width; // save image data
 
             PS.imageLoad( "sprites/blockBreaker/whiteBloodCell.gif", function ( data ) {
-                PS.debug( "g loaded\n" );
                 whiteCell_data = data; // save image data
     
                 PS.imageLoad( "sprites/blockBreaker/tiny_corona.gif", function ( data ) {
-                    PS.debug( "g loaded\n" );
                     miniCorona_data = data; // save image data
         
                 } );
@@ -145,7 +142,7 @@ var blockGame = {
         
         //hit white blood cell, either win or create new path down
         if(find2){
-            PS.debug("i hit a white blood cell!\n");
+            // PS.debug("i hit a white blood cell!\n");
             PS.audioPlay('xylo_ab5');
             blockGame.makeNewPath(find2.xpos, false); //pass in x pos of paddle hit
             find2.hits+=1;
@@ -183,13 +180,11 @@ var blockGame = {
 
             //generate new path if bounces off top
             if(my == 5){
-                PS.debug("hit edge!\n");
                 blockGame.makeNewPath(mx, false);
             }
             
             //reduce happiness if bounces off bottom
             if(my == DIM - 8){
-                PS.debug("hit bottom!\n");
                 statsData.changeStat('happy', -2);
                 PS.audioPlayChannel(allSFX[HURT_NOISE].noise, {loop:false});
             }
@@ -205,7 +200,6 @@ var blockGame = {
 
     //make new path when mini corona bounces off of blocks or paddle
     makeNewPath: function(blockX, isPaddle){
-        PS.debug("Xpos of blokc hit: " + blockX + "\n");
         var nx;
         var ny;
 
@@ -235,7 +229,6 @@ var blockGame = {
     //calculate next x pos based off of where the corona launched from and where it landed  
     calculateAngle : function(xpre, xhit){
         var dif = mx - blockGame.xprev;
-        PS.debug("same x make random!!! " + dif + "\n");
 
         if(dif == 0){
             return PS.random(DIM-1);
@@ -254,7 +247,6 @@ var blockGame = {
     showWin: function(){
         
         if(blockGame.isWin){
-            PS.debug("right result!\n");
             blockGame.result = PS.spriteImage(correct_data);
             PS.statusText("You broke down the immune system!");
             blockGame.isWin = false;
@@ -263,7 +255,6 @@ var blockGame = {
             PS.spriteShow(blockGame.result, true);
         } else {
             if(blockGame.result != '' && blockGame.result != null){
-                PS.debug("erase result sprite!\n");
                 PS.spriteShow(blockGame.result, false);
             }
             PS.timerStop(resultTimer);
@@ -273,7 +264,6 @@ var blockGame = {
             PS.audioStop(current_music);
             PS.audioPlayChannel( allMusic[0].m, {loop: true});
             current_music =  allMusic[0].m;
-            PS.debug( "home time\n" );
         }
     }
 

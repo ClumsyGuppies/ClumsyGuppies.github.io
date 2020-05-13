@@ -269,7 +269,6 @@ var me = ( function () {
 				PS.spriteMove( coronaCurrent_sprite, corona_x, corona_y );
 				//handle movement for player controller paddle during block breaker game
 				if(state == 'block' && blockGame.fullBreaker != null && blockGame.fullBreaker != []){
-					PS.debug("moving all block sprites!\n");
 					if(blockGame.fullBreaker[1] != '' && blockGame.fullBreaker[1] != null && blockGame.fullBreaker[2] != ''
 						&& blockGame.fullBreaker[2] != null)
 					PS.spriteMove( blockGame.fullBreaker[1].sprite, corona_x -3, corona_y ); //left
@@ -308,7 +307,6 @@ var me = ( function () {
 	var loadMusic = function(filename, index, fileType){
 		PS.audioLoad( filename, {path: 'music/', fileTypes: [fileType], onLoad : function(data){
 			 allMusic[index].m = data.channel; // save ID
-			PS.debug(allMusic[index].m + " loading done!\n");
 			} 
 		});
 	};
@@ -361,7 +359,6 @@ var me = ( function () {
 
 	//general function to add data w/o color
 	var fillData = function(x1, x2, y1, y2, data){
-		PS.debug("y and y " + y1 + " " + y2 + '\n')
 		for(var i = x1; i <=x2; i++){
 			for(var j = y1; j<= y2; j++){
 				PS.data(i, j, data);
@@ -375,53 +372,44 @@ var me = ( function () {
 		statsData.loadAges();
 		// Load all images in succession
 		PS.imageLoad( "sprites/ui.bmp", function ( data ) {
-			PS.debug( "background loaded\n" ); 
 			background_data = data; // save image data
 			background_sprite = PS.spriteImage(background_data);
 
 			PS.spritePlane( background_sprite, PLANE_MAIN ); // assign plane
 			PS.spriteMove( background_sprite, 0, 0 ); // move to initial position
 			PS.imageLoad( "sprites/coronaSmall.gif", function ( data ) {
-				PS.debug( "corona loaded\n" );
 
 				coronaSmall_data = data; // save image data
 				coronaSmall_width = data.width;
 
 				PS.imageLoad( "sprites/bloodCell.gif", function ( data ) {
-					PS.debug( "food loaded\n" );
 					food_data = data; // save image data
 					food_width = data.width;
 					
 					PS.imageLoad( "sprites/vaccine.gif", function ( data ) {
-						PS.debug( "vaccine loaded\n" );
 						vaccine_width = data.width; 
 						vaccine_data = data; // save image data
 
 						PS.imageLoad( "sprites/ageMeter.gif", function ( data ) {
-							PS.debug( "age loaded\n" );
 							age_width = data.width; 
 							age_data = data; // save image data
 							age_sprite = PS.spriteImage(age_data);
 							
 							PS.imageLoad( "sprites/happyMeter.gif", function ( data ) {
-								PS.debug( "hap loaded\n" );
 								happy_width = data.width; 
 								happy_data = data; // save image data
 								happy_sprite = PS.spriteImage(happy_data);
 								
 								PS.imageLoad( "sprites/hungerMeter.gif", function ( data ) {
-									PS.debug( "hung loaded\n" );
 									hunger_width = data.width; 
 									hunger_data = data; // save image data
 									hunger_sprite = PS.spriteImage(hunger_data);
 
 									PS.imageLoad( "sprites/arrowLeft.gif", function ( data ) {
-										PS.debug( "left arrow loaded\n" );
 										arrowLeft_data = data; // save image data
 										arrowLeft = PS.spriteImage( arrowLeft_data );
 										
 										PS.imageLoad( "sprites/arrowRight.gif", function ( data ) {
-											PS.debug( "arrow right loaded\n" );
 											arrowRight_data = data; // save image data
 											arrowRight = PS.spriteImage( arrowRight_data );
 											
@@ -495,7 +483,6 @@ var me = ( function () {
 
 		//public version of corona collision function, use when switching ages
 		setPublicCollide : function(){
-			PS.debug("public collide called\n");
 			PS.spriteCollide(coronaCurrent_sprite, coronaCollide);
 		},
 		
@@ -628,7 +615,6 @@ var me = ( function () {
 			} else {
 				//beeg beeg corona so you can see outfit
 				PS.spriteShow(coronaCurrent_sprite, false);
-				PS.debug("bee2g: " + bigBase_data + "\n");
 				if(current_data == ''){
 					current_data = bigBase_data;
 				}
@@ -642,11 +628,10 @@ var me = ( function () {
 					current_width = cowboy_width;
 					
 				}else if(current_data == corona2_data){ //too young for outfits, use young corona sprite
-					PS.debug("is smol 2 please use\n");
 					corona_y = 17;
 					current_width = corona2_width;    
 				} else if(currentSmall_data == corona1_data){
-					//nothing
+					corona_y = 23;
 				} else if (currentSmall_data == corona0_data){
 					corona_y = 24;
 				}else {
@@ -688,7 +673,6 @@ PS.touch = function ( x, y, data, options ) {
 			PS.audioStop(current_music);
 			PS.audioPlayChannel( allMusic[1].m, {loop: true});
 			current_music =  allMusic[1].m;
-			PS.debug( "food time\n" );
 		break;
 		case "home":
 			state = "home";
@@ -697,7 +681,6 @@ PS.touch = function ( x, y, data, options ) {
 			PS.audioStop(current_music);
 			PS.audioPlayChannel( allMusic[0].m, {loop: true});
 			current_music =  allMusic[0].m;
-			PS.debug( "home time\n" );
 			break;
 		case "stats":
 			PS.statusText("Corona's Stats");
@@ -706,7 +689,6 @@ PS.touch = function ( x, y, data, options ) {
 			notifType = 3;
 			// me.notify(3);
 			statsData.drawStats();
-			PS.debug("value of stats channel  " + allMusic[4].m   + "\n");
 			PS.audioStop(current_music);
 			PS.audioPlayChannel( allMusic[4].m, {loop: true});
 			current_music =  allMusic[4].m;
@@ -780,7 +762,6 @@ PS.enter = function( x, y, data, options ) {
 		
 	} else {
 		
-		PS.debug("current state: " + state + "\n");
 		PS.statusText("Corona's Stats");
 	}
 	switch(data){

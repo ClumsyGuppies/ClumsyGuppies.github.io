@@ -99,7 +99,7 @@ var dna = {
             me.fillBlock(cx, cx+1, 16, 17, 0, PLANE_MAIN, BACKGROUND);
             cx+=2;
         });
-        PS.debug("timer sq and timer setup val: " + sqTimer + " " + setupTimer + '\n');
+        // PS.debug("timer sq and timer setup val: " + sqTimer + " " + setupTimer + '\n');
         sqIndex = 0;
         numTries = 0;
         xTick = 26;
@@ -110,23 +110,19 @@ var dna = {
         xTick = 26;
         //clear timers
         if(!isSqTimerDone && sqTimer != ''){
-            PS.debug("stop sequnce timer!\n");
+            // PS.debug("stop sequnce timer!\n");
             PS.timerStop(sqTimer);
             isSqTimerDone = true;
         }
-        PS.debug("result timer? " + isResultTimerDone+'\n');
         if(!isResultTimerDone && resultTimer != ''){
-            PS.debug("stop resutl timer!\n");
             PS.timerStop(resultTimer);
             isResultTimerDone = true;
         }
         if(!isSetupTimerDone && setupTimer != ''){
-            PS.debug("stop setup timer!\n");
             PS.timerStop(setupTimer);
             isSetupTimerDone = true;
         }
         if(!isResetTimerDone && resetTimer != ''){
-            PS.debug("stop reset timer!\n");
             PS.timerStop(resetTimer);
             isResetTimerDone = true;
         }
@@ -183,7 +179,7 @@ var dna = {
             me.fillBlock(cx, cx+1, 16, 17, e, PLANE_MAIN, e);
             cx+=2;
         });
-        aminos.forEach(e=>PS.debug("amino: " + e + '\n'));
+        // aminos.forEach(e=>PS.debug("amino: " + e + '\n'));
         //draw letters
         aminos.forEach(function(e){
             var n = PS.spriteImage(e);
@@ -206,13 +202,11 @@ var dna = {
             data == LAVENDER || data == RED || data == ORANGE || data == PURPLE || data == LIGHT_GREEN ){
             selectedColor = data;
             PS.audioPlay('xylo_eb7');
-            PS.debug("selected color is " + selectedColor + '\n');
 
             //selected an acid
         } else if (data == aminoT_data || data == aminoC_data || data ==  aminoG_data || data == aminoA_data){ 
             selectedAcid = data;
             PS.audioPlay('xylo_eb6');
-            PS.debug("selected acid is " + selectedAcid + '\n');
         }
 
         //selected a blank space for guessing
@@ -249,7 +243,6 @@ var dna = {
     checkPlayerSequenceDefined: function(){
         for(i = 0; i < answerSequence.length; i++){
             if(playerSequence[i] == undefined){
-                PS.debug("sequnce not finsihed \n");
                 return false;
             }
         }
@@ -263,14 +256,11 @@ var dna = {
        
         for(i = 0; i < answerSequence.length; i++){
             if(playerSequence[i] == undefined){
-                PS.debug("sequnce not finsihed \n");
                 return;
             }
             if(answerSequence[i].color == playerSequence[i].color && answerSequence[i].data == playerSequence[i].acid){
                 //acids and colors match, continue loop
-                PS.debug("this part matches!\n");
             } else {
-                PS.debug("wrong sequence boo hoo\n");
                 //increase number of guesses made; if 3, lost the game + decrease happiness + go home
                 isRight = false;
                 numTries++;
@@ -282,7 +272,6 @@ var dna = {
 
                 //out of tries reset to home and reduce happiness
                 if(numTries == 3){
-                    PS.debug("ran out of tries! less happy");
                     statsData.changeStat('happy', -3);
                     //happy-=3;
                     PS.audioPlayChannel(allSFX[SAD_NOISE].noise, {loop:false});
@@ -323,18 +312,14 @@ var dna = {
         PS.audioStop(current_music);
         PS.audioPlayChannel( allMusic[0].m, {loop: true});
         current_music =  allMusic[0].m;
-        PS.debug( "home time\n" );
         PS.timerStop(resetTimer);
     },
 
     //flash correct or wrong answer result on screen for player feedback
     flashResult: function(){
-        PS.debug("flash result!\n");
         isResultTimerDone = true;
         if(dna.resultShown){ //already showed result, stop timer and show nothing else
-            PS.debug('result ahs alreayd been shown stop \n');
             if(currentResult != ''){
-                PS.debug("reset result!\n");
                 PS.spriteShow(currentResult, false);
                 
                 currentResult = '';
@@ -356,11 +341,9 @@ var dna = {
         //     return;
         // }
         if(isRight){
-            PS.debug("right result!\n");
             currentResult = PS.spriteImage(correct_data);
             PS.statusText("You've found the right DNA sequence!");
         } else {
-            PS.debug("wrong result!\n");
             PS.statusText("Wrong DNA sequence :(");
             currentResult = PS.spriteImage(wrong_data);
         }
@@ -417,7 +400,6 @@ var dna = {
             newLetter = PS.spriteImage(matchSprites[e.acid]);
             e.data = matchSprites[e.acid]; //store data for comparison later
             e.acid = newLetter;
-            PS.debug("new letter "+ newLetter +  "\n");           
         })
     },
 
@@ -436,8 +418,8 @@ var dna = {
             answerSequence.push({color: rc, acid: ra, data:ra});
 
         }
-        PS.debug("anwer sequence is: \n");
-        answerSequence.forEach(el=>PS.debug(el.color + " " + el.acid + '\n'));
+        // PS.debug("anwer sequence is: \n");
+        // answerSequence.forEach(el=>PS.debug(el.color + " " + el.acid + '\n'));
         this.fillSequence();
 
     },
@@ -445,7 +427,6 @@ var dna = {
     //takes in randon number of type color or acid and returns random color or acid for 
     //random sequence generation
     pickRand : function(num, type){
-        PS.debug("num is " + num + '\n');
         var rc = {
             1: LIGHT_RED,
             2: LIGHT_BLUE,
@@ -461,10 +442,8 @@ var dna = {
         }
         switch(type){
             case 'color':
-                PS.debug("rand color chosen " + rc[num] + '\n');
                 return rc[num];
             case 'acid':
-                PS.debug("rand acid chosen " + ra[num] + '\n');
                 return ra[num];
         }
     
@@ -473,34 +452,27 @@ var dna = {
     //load in amino acid sprites
     loadBlocks: function(){
         PS.imageLoad( "sprites/aminos/a.gif", function ( data ) {
-            PS.debug( "a loaded\n" );
             aminoA_data = data; // save image data
             
             PS.imageLoad( "sprites/aminos/t.gif", function ( data ) {
-                PS.debug( "t loaded\n" );
                 aminoT_data = data; // save image data
                 
                 PS.imageLoad( "sprites/aminos/c.gif", function ( data ) {
-                    PS.debug( "c loaded\n" );
                     aminoC_data = data; // save image data
                     
                     PS.imageLoad( "sprites/aminos/g.gif", function ( data ) {
-                        PS.debug( "g loaded\n" );
                         aminoG_data = data; // save image data
 
                         aminos.push(aminoA_data, aminoC_data, aminoG_data, aminoT_data);
 
                         PS.imageLoad( "sprites/aminos/correct.gif", function ( data ) {
-                            PS.debug( "g loaded\n" );
                             correct_data = data; // save image data
 
                             
                             PS.imageLoad( "sprites/aminos/incorrect.gif", function ( data ) {
-                                PS.debug( "g loaded\n" );
                                 wrong_data = data; // save image data
 
                                 PS.imageLoad( "sprites/aminos/question.gif", function ( data ) {
-                                    PS.debug( "g loaded\n" );
                                     question_data = data; // save image data
     
                                 } );

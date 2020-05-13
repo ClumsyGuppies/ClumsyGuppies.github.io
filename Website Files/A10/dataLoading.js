@@ -14,7 +14,6 @@ var prom = {
     },
 
     assignData: function(){
-        PS.debug( "arrow right loaded\n" );
         arrowRight_data = data; // save image data
         arrowRight = PS.spriteImage( arrowRight_data );
     }
