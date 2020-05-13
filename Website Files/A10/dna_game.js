@@ -268,6 +268,9 @@ var dna = {
                 isResultTimerDone = false;
                 resultTimer = PS.timerStart(50, this.flashResult);
                 //fill in tick
+                if(xTick > DIM -1){
+                    xTick = DIM -2;
+                }
                 PS.color(xTick, 23, PS.COLOR_BLACK);
                 xTick+=2;
 
