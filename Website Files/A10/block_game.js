@@ -161,6 +161,7 @@ var blockGame = {
                     blockGame.isWin = true;
                     PS.audioPlayChannel(allSFX[LAUGH_NOISE].noise, {loop:false});
                     resultTimer = PS.timerStart(10, blockGame.showWin);
+                    
                 }
             }
             return;

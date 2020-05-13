@@ -19,6 +19,7 @@ correct_data = '';
 wrong_data = '';
 question_data = '';
 questionMark = '';
+// myindex= 0;
 
 
 colors= [LIGHT_BLUE, LIGHT_GREEN, LIGHT_RED, ORANGE, PURPLE, RED];
@@ -278,7 +279,7 @@ var dna = {
                     notifType = 2;
                     
                    // me.notify(2);
-                    resetTimer = PS.timerStart(90, this.waitAndReset);
+                    resetTimer = PS.timerStart(120, this.waitAndReset);
                     isResetTimerDone = false;
                     DB.send();
 
@@ -297,7 +298,7 @@ var dna = {
         statsData.changeStat('happy', 3);
         notifType = 1;
         isResetTimerDone = false;
-        resetTimer = PS.timerStart(90, this.waitAndReset);
+        resetTimer = PS.timerStart(120, this.waitAndReset);
         //notif!
         return true;
 
@@ -314,22 +315,33 @@ var dna = {
         current_music =  allMusic[0].m;
         PS.timerStop(resetTimer);
     },
-
+    
     //flash correct or wrong answer result on screen for player feedback
     flashResult: function(){
-        isResultTimerDone = true;
+        // PS.debug("flash result /called!" + myindex + "\n");
+        // myindex++;
+        
         if(dna.resultShown){ //already showed result, stop timer and show nothing else
+            // PS.debug("dna already shown\n");
             if(currentResult != ''){
+                // PS.debug("current result is null\n");
                 PS.spriteShow(currentResult, false);
                 
                 currentResult = '';
                 PS.statusText("Memorize That Mutation!");
                 dna.resultShown = false;
-                PS.timerStop(resultTimer);
+                if(!isResultTimerDone){
+                    PS.timerStop(resultTimer);
+                    isResultTimerDone = true;
+                }
                 return;
             }
-            PS.timerStop(resultTimer);
+            if(!isResultTimerDone){
+                PS.timerStop(resultTimer);
+                isResultTimerDone = true;
+            }
         }
+        // PS.debug("continue on\n");
         dna.resultShown = true;
         // if(currentResult != ''){
         //     PS.debug("reset result!\n");
